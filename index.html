@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>PROMO · Backstore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Montserrat:wght@900&display=swap">
+<style>
+/* La télé du backstore (13 nov. 2026). Affichage seulement : personne n'y touche.
+   Le style des iPads. Tout en cqw dans un cadre 16:9 qui remplit l'écran. */
+:root {
+  color-scheme: light;
+  --ecran: #E9ECE8;
+  --blanc: #FFFFFF;
+  --encre: #1E221F;
+  --fonce: #232724;
+  --gris: #767C77;
+  --gris-pale: #9AA09B;
+  --vert: #28A55A;
+  --rouge: #E5484D;
+  --violet: #7A5AF0;
+  --texte: 'Outfit', ui-rounded, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --noir: 'Montserrat', 'Outfit', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--encre); font-family: var(--texte); overflow: hidden; cursor: none; }
+[hidden] { display: none !important; }
+
+.tele {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(100vw, 177.78vh); aspect-ratio: 16 / 9; container-type: inline-size; overflow: hidden;
+}
+.ecran { position: absolute; inset: 0; display: grid; grid-template-rows: auto 1fr; padding: 1.8cqw 2.2cqw 2.2cqw; gap: 1.6cqw; }
+
+.entete { display: flex; align-items: center; justify-content: space-between; gap: 2cqw; }
+.logo { height: 3.2cqw; width: auto; color: #000; display: block; flex: none; }
+.cotes { flex: 1; display: flex; justify-content: center; gap: 1cqw; min-width: 0; }
+.cote { background: var(--blanc); border-radius: 1.5cqw; box-shadow: 0 .4cqw 1cqw rgba(0,0,0,.05); padding: .75cqw 1.4cqw; min-width: 0; line-height: 1; }
+.cote small { display: block; font-size: 1.05cqw; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--gris-pale); }
+.cote b { display: block; font-size: 2.1cqw; font-weight: 800; letter-spacing: -.03em; margin-top: .4cqw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cote b em { font-style: normal; font-weight: 700; color: var(--gris); font-size: 1.6cqw; margin-left: .4cqw; }
+.cote.zero b { color: var(--gris-pale); }
+.cote.retard b { color: var(--rouge); }
+.cote.panne { background: var(--rouge); }
+.cote.panne small, .cote.panne b { color: #fff; }
+.heure { text-align: right; line-height: 1; flex: none; }
+.heure b { display: block; font-family: var(--noir); font-weight: 900; font-size: 4.4cqw; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+.heure small { display: block; font-size: 1.5cqw; font-weight: 600; color: var(--gris); margin-top: .35cqw; }
+
+.corps { display: grid; grid-template-columns: 1fr 1.3fr; gap: 1.8cqw; min-height: 0; }
+.gauche { display: grid; grid-template-rows: auto 1fr; gap: 1.8cqw; min-height: 0; }
+.carte { background: var(--blanc); border-radius: 2.4cqw; box-shadow: 0 .5cqw 1.4cqw rgba(0,0,0,.06); min-height: 0; }
+.libelle { font-size: 1.35cqw; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--gris-pale); }
+
+.etiq { padding: 1.6cqw 2.2cqw; display: grid; gap: .7cqw; transition: background .3s, color .3s; }
+.etiq .mot { font-size: 3.4cqw; font-weight: 800; letter-spacing: -.035em; line-height: 1.02; text-wrap: balance; }
+.etiq .sous { font-size: 1.7cqw; font-weight: 600; color: var(--gris); }
+.etiq.calme .mot { color: var(--gris-pale); }
+.etiq.alerte { background: var(--rouge); color: #fff; animation: pouls 1.6s ease-in-out infinite; }
+.etiq.alerte .libelle, .etiq.alerte .sous { color: rgba(255,255,255,.85); }
+@keyframes pouls { 0%,100% { box-shadow: 0 0 0 0 rgba(229,72,77,.55); } 50% { box-shadow: 0 0 0 1.2cqw rgba(229,72,77,0); } }
+
+.cmd { display: grid; grid-template-rows: auto 1fr; gap: 1cqw; min-height: 0; overflow: hidden; }
+.cmd > .libelle { display: flex; justify-content: space-between; padding: 0 1cqw; }
+.heures { display: grid; gap: .9cqw; align-content: start; min-height: 0; }
+.h {
+  position: relative; overflow: hidden; height: 5.3cqw; border-radius: 1.8cqw; background: var(--blanc); color: var(--encre);
+  display: flex; align-items: center; gap: 1.2cqw; padding: 0 1.2cqw 0 1.9cqw; box-shadow: 0 .45cqw 1.2cqw rgba(0,0,0,.06);
+}
+.h b { position: relative; font-family: var(--noir); font-weight: 900; font-size: 3.1cqw; letter-spacing: -.05em; font-variant-numeric: tabular-nums; line-height: 1; }
+.h i { position: relative; flex: 1; font-style: normal; font-size: 1.7cqw; font-weight: 700; color: var(--gris); }
+.h span { position: relative; font-size: 1.6cqw; font-weight: 700; color: var(--gris); background: var(--ecran); border-radius: 999px; padding: .5cqw 1.2cqw; white-space: nowrap; }
+.h.r { background: linear-gradient(135deg, #F06266, #D93A40); color: #fff; box-shadow: inset 0 0 0 .1cqw rgba(255,255,255,.14), 0 .7cqw 1.6cqw rgba(217,58,64,.3); }
+.h.r::before { content: ""; position: absolute; width: 16cqw; height: 16cqw; right: -5cqw; top: -9cqw; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.22), rgba(0,0,0,0)); }
+.h.r i { color: rgba(255,255,255,.85); }
+.h.r span { color: #fff; background: rgba(0,0,0,.18); }
+.vide { background: var(--blanc); border-radius: 2.4cqw; box-shadow: 0 .5cqw 1.4cqw rgba(0,0,0,.06); padding: 2cqw 2.2cqw; font-size: 3cqw; font-weight: 800; letter-spacing: -.03em; color: var(--gris-pale); }
+
+.droitecol { display: grid; grid-template-rows: auto 1fr; gap: 1cqw; min-height: 0; }
+.droitecol > .libelle { padding-left: 1cqw; position: relative; z-index: 3; }
+.appels { position: relative; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; gap: 1.2cqw; padding: .5cqw; }
+.appels::before { content: ""; position: absolute; inset: 0 0 auto; height: 7cqw; z-index: 2; pointer-events: none; background: linear-gradient(var(--ecran), var(--ecran) 30%, rgba(233,236,232,0)); }
+.banniere { flex: none; height: 9.6cqw; border-radius: 2.4cqw; background: var(--blanc); display: flex; align-items: center; gap: 1.8cqw; padding: 0 1.1cqw; box-shadow: 0 .45cqw 1.2cqw rgba(0,0,0,.06); }
+.banniere.neuve { animation: arrive .42s cubic-bezier(.33,1,.68,1); }
+@keyframes arrive { from { opacity: 0; transform: translateY(5cqw); } to { opacity: 1; transform: none; } }
+.photo { position: relative; width: 7.6cqw; height: 7.6cqw; border-radius: 1.7cqw; flex: none; background: var(--ecran); display: grid; place-items: center; font-size: 3.6cqw; font-weight: 800; color: var(--gris-pale); }
+.photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 1.7cqw; display: block; }
+.fois { position: absolute; right: -.7cqw; top: -.7cqw; min-width: 3.2cqw; height: 3.2cqw; padding: 0 .7cqw; border-radius: 999px; background: var(--fonce); color: #fff; display: grid; place-items: center; font-family: var(--noir); font-weight: 900; font-size: 1.7cqw; box-shadow: 0 0 0 .3cqw var(--blanc); }
+.nom { flex: 1; min-width: 0; font-size: 3.4cqw; font-weight: 700; letter-spacing: -.035em; line-height: 1.05; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.no { width: 7.6cqw; height: 7.6cqw; border-radius: 1.9cqw; flex: none; display: grid; place-items: center; font-family: var(--noir); font-weight: 900; font-size: 4.8cqw; color: #fff; background: var(--fonce); }
+.no.p2 { background: var(--violet); }
+.rien { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.rien b { font-size: 3.4cqw; font-weight: 700; letter-spacing: -.035em; color: var(--gris-pale); }
+@media (prefers-reduced-motion: reduce) { .banniere.neuve, .etiq.alerte { animation: none; } }
+
+/* Le code (une seule fois, à l'installation de la télé) */
+.porte { position: absolute; inset: 0; display: grid; place-items: center; cursor: auto; }
+.porte form { background: var(--blanc); border-radius: 2.4cqw; box-shadow: 0 .5cqw 1.4cqw rgba(0,0,0,.06); padding: 3cqw 3.4cqw; display: grid; gap: 1.6cqw; justify-items: center; width: 34cqw; }
+.porte .logo { height: 3cqw; }
+.porte label { font-size: 1.6cqw; font-weight: 700; color: var(--gris); }
+.porte input { width: 100%; font: 900 4.4cqw var(--noir); letter-spacing: .4em; text-align: center; padding: 1cqw; border: .2cqw solid #DADED8; border-radius: 1.6cqw; color: var(--encre); background: var(--ecran); }
+.porte input:focus { outline: none; border-color: var(--encre); }
+.porte button { width: 100%; font: 800 2cqw var(--texte); color: #fff; background: var(--encre); border: 0; border-radius: 999px; padding: 1.1cqw; cursor: pointer; }
+.porte .erreur { font-size: 1.5cqw; font-weight: 700; color: var(--rouge); min-height: 1.8cqw; }
+.son { position: absolute; left: 50%; bottom: 1.2cqw; transform: translateX(-50%); background: var(--encre); color: #fff; font-size: 1.5cqw; font-weight: 700; border-radius: 999px; padding: .7cqw 1.6cqw; cursor: auto; }
+</style>
+</head>
+<body>
+<div class="tele">
+  <div class="ecran" id="ecran" hidden>
+    <div class="entete">
+      <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3802.00 732.00" role="img" aria-label="PROMO"> <g fill="currentColor" transform="translate(-57.00 716.00)"> <path d="M57.0 0V-700H394.0Q492.0 -700 563.5 -668.0Q635.0 -636 674.0 -576.5Q713.0 -517 713.0 -436Q713.0 -355 674.0 -296.0Q635.0 -237 563.5 -204.5Q492.0 -172 394.0 -172H188.0L293.0 -273V0ZM293.0 -247 188.0 -354H379.0Q428.0 -354 451.5 -376.0Q475.0 -398 475.0 -436Q475.0 -474 451.5 -496.0Q428.0 -518 379.0 -518H188.0L293.0 -625Z"></path> <path d="M730.0 0V-700H1057.0Q1218.0 -700 1302.0 -629.0Q1386.0 -558 1386.0 -436Q1386.0 -355 1347.0 -296.5Q1308.0 -238 1236.5 -207.0Q1165.0 -176 1067.0 -176H861.0L966.0 -273V0ZM1149.0 0 977.0 -255H1227.0L1401.0 0ZM966.0 -247 861.0 -354H1052.0Q1101.0 -354 1124.5 -376.0Q1148.0 -398 1148.0 -436Q1148.0 -474 1124.5 -496.0Q1101.0 -518 1052.0 -518H861.0L966.0 -625Z"></path> <path d="M1783.0 16Q1697.0 16 1624.5 -11.0Q1552.0 -38 1499.0 -87.5Q1446.0 -137 1416.5 -204.0Q1387.0 -271 1387.0 -350Q1387.0 -430 1416.5 -496.5Q1446.0 -563 1499.0 -612.5Q1552.0 -662 1624.5 -689.0Q1697.0 -716 1782.0 -716Q1868.0 -716 1940.0 -689.0Q2012.0 -662 2065.0 -612.5Q2118.0 -563 2147.5 -496.5Q2177.0 -430 2177.0 -350Q2177.0 -271 2147.5 -204.0Q2118.0 -137 2065.0 -87.5Q2012.0 -38 1940.0 -11.0Q1868.0 16 1783.0 16ZM1782.0 -175Q1815.0 -175 1843.5 -187.0Q1872.0 -199 1893.5 -221.5Q1915.0 -244 1927.0 -276.5Q1939.0 -309 1939.0 -350Q1939.0 -391 1927.0 -423.5Q1915.0 -456 1893.5 -478.5Q1872.0 -501 1843.5 -513.0Q1815.0 -525 1782.0 -525Q1749.0 -525 1720.5 -513.0Q1692.0 -501 1670.5 -478.5Q1649.0 -456 1637.0 -423.5Q1625.0 -391 1625.0 -350Q1625.0 -309 1637.0 -276.5Q1649.0 -244 1670.5 -221.5Q1692.0 -199 1720.5 -187.0Q1749.0 -175 1782.0 -175Z"></path> <path d="M2203.0 0V-700H2397.0L2677.0 -243H2575.0L2847.0 -700H3041.0L3043.0 0H2828.0L2826.0 -376H2860.0L2674.0 -63H2570.0L2376.0 -376H2418.0V0Z"></path> <path d="M3465.0 16Q3379.0 16 3306.5 -11.0Q3234.0 -38 3181.0 -87.5Q3128.0 -137 3098.5 -204.0Q3069.0 -271 3069.0 -350Q3069.0 -430 3098.5 -496.5Q3128.0 -563 3181.0 -612.5Q3234.0 -662 3306.5 -689.0Q3379.0 -716 3464.0 -716Q3550.0 -716 3622.0 -689.0Q3694.0 -662 3747.0 -612.5Q3800.0 -563 3829.5 -496.5Q3859.0 -430 3859.0 -350Q3859.0 -271 3829.5 -204.0Q3800.0 -137 3747.0 -87.5Q3694.0 -38 3622.0 -11.0Q3550.0 16 3465.0 16ZM3464.0 -175Q3497.0 -175 3525.5 -187.0Q3554.0 -199 3575.5 -221.5Q3597.0 -244 3609.0 -276.5Q3621.0 -309 3621.0 -350Q3621.0 -391 3609.0 -423.5Q3597.0 -456 3575.5 -478.5Q3554.0 -501 3525.5 -513.0Q3497.0 -525 3464.0 -525Q3431.0 -525 3402.5 -513.0Q3374.0 -501 3352.5 -478.5Q3331.0 -456 3319.0 -423.5Q3307.0 -391 3307.0 -350Q3307.0 -309 3319.0 -276.5Q3331.0 -244 3352.5 -221.5Q3374.0 -199 3402.5 -187.0Q3431.0 -175 3464.0 -175Z"></path> </g> </svg>
+      <div class="cotes" id="cotes"></div>
+      <div class="heure"><b id="horloge">--:--</b><small id="jour"></small></div>
+    </div>
+    <div class="corps">
+      <div class="gauche">
+        <section class="carte etiq calme" id="etiq"></section>
+        <section class="cmd">
+          <div class="libelle"><span>Commandes pas prêtes</span><span id="plus"></span></div>
+          <div class="heures" id="heures"></div>
+        </section>
+      </div>
+      <section class="droitecol">
+        <div class="libelle">Demandes du plancher</div>
+        <div class="appels" id="appels"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="porte" id="porte" hidden>
+    <form id="formCode" autocomplete="off">
+      <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3802.00 732.00" role="img" aria-label="PROMO"> <g fill="currentColor" transform="translate(-57.00 716.00)"> <path d="M57.0 0V-700H394.0Q492.0 -700 563.5 -668.0Q635.0 -636 674.0 -576.5Q713.0 -517 713.0 -436Q713.0 -355 674.0 -296.0Q635.0 -237 563.5 -204.5Q492.0 -172 394.0 -172H188.0L293.0 -273V0ZM293.0 -247 188.0 -354H379.0Q428.0 -354 451.5 -376.0Q475.0 -398 475.0 -436Q475.0 -474 451.5 -496.0Q428.0 -518 379.0 -518H188.0L293.0 -625Z"></path> <path d="M730.0 0V-700H1057.0Q1218.0 -700 1302.0 -629.0Q1386.0 -558 1386.0 -436Q1386.0 -355 1347.0 -296.5Q1308.0 -238 1236.5 -207.0Q1165.0 -176 1067.0 -176H861.0L966.0 -273V0ZM1149.0 0 977.0 -255H1227.0L1401.0 0ZM966.0 -247 861.0 -354H1052.0Q1101.0 -354 1124.5 -376.0Q1148.0 -398 1148.0 -436Q1148.0 -474 1124.5 -496.0Q1101.0 -518 1052.0 -518H861.0L966.0 -625Z"></path> <path d="M1783.0 16Q1697.0 16 1624.5 -11.0Q1552.0 -38 1499.0 -87.5Q1446.0 -137 1416.5 -204.0Q1387.0 -271 1387.0 -350Q1387.0 -430 1416.5 -496.5Q1446.0 -563 1499.0 -612.5Q1552.0 -662 1624.5 -689.0Q1697.0 -716 1782.0 -716Q1868.0 -716 1940.0 -689.0Q2012.0 -662 2065.0 -612.5Q2118.0 -563 2147.5 -496.5Q2177.0 -430 2177.0 -350Q2177.0 -271 2147.5 -204.0Q2118.0 -137 2065.0 -87.5Q2012.0 -38 1940.0 -11.0Q1868.0 16 1783.0 16ZM1782.0 -175Q1815.0 -175 1843.5 -187.0Q1872.0 -199 1893.5 -221.5Q1915.0 -244 1927.0 -276.5Q1939.0 -309 1939.0 -350Q1939.0 -391 1927.0 -423.5Q1915.0 -456 1893.5 -478.5Q1872.0 -501 1843.5 -513.0Q1815.0 -525 1782.0 -525Q1749.0 -525 1720.5 -513.0Q1692.0 -501 1670.5 -478.5Q1649.0 -456 1637.0 -423.5Q1625.0 -391 1625.0 -350Q1625.0 -309 1637.0 -276.5Q1649.0 -244 1670.5 -221.5Q1692.0 -199 1720.5 -187.0Q1749.0 -175 1782.0 -175Z"></path> <path d="M2203.0 0V-700H2397.0L2677.0 -243H2575.0L2847.0 -700H3041.0L3043.0 0H2828.0L2826.0 -376H2860.0L2674.0 -63H2570.0L2376.0 -376H2418.0V0Z"></path> <path d="M3465.0 16Q3379.0 16 3306.5 -11.0Q3234.0 -38 3181.0 -87.5Q3128.0 -137 3098.5 -204.0Q3069.0 -271 3069.0 -350Q3069.0 -430 3098.5 -496.5Q3128.0 -563 3181.0 -612.5Q3234.0 -662 3306.5 -689.0Q3379.0 -716 3464.0 -716Q3550.0 -716 3622.0 -689.0Q3694.0 -662 3747.0 -612.5Q3800.0 -563 3829.5 -496.5Q3859.0 -430 3859.0 -350Q3859.0 -271 3829.5 -204.0Q3800.0 -137 3747.0 -87.5Q3694.0 -38 3622.0 -11.0Q3550.0 16 3465.0 16ZM3464.0 -175Q3497.0 -175 3525.5 -187.0Q3554.0 -199 3575.5 -221.5Q3597.0 -244 3609.0 -276.5Q3621.0 -309 3621.0 -350Q3621.0 -391 3609.0 -423.5Q3597.0 -456 3575.5 -478.5Q3554.0 -501 3525.5 -513.0Q3497.0 -525 3464.0 -525Q3431.0 -525 3402.5 -513.0Q3374.0 -501 3352.5 -478.5Q3331.0 -456 3319.0 -423.5Q3307.0 -391 3307.0 -350Q3307.0 -309 3319.0 -276.5Q3331.0 -244 3352.5 -221.5Q3374.0 -199 3402.5 -187.0Q3431.0 -175 3464.0 -175Z"></path> </g> </svg>
+      <label for="code">Code de la télé</label>
+      <input id="code" inputmode="numeric" maxlength="6" pattern="[0-9]*" autofocus>
+      <button type="submit">Entrer</button>
+      <div class="erreur" id="erreur"></div>
+    </form>
+  </div>
+  <div class="son" id="son" hidden>Touchez l’écran une fois pour le son</div>
+</div>
+
+<script>
+(() => {
+  const API = 'https://eewfbieadqiagthlsedf.supabase.co/functions/v1/ecran-backstore';
+  const CLE = 'promo-ecran-backstore';
+  const TZ = 'America/Toronto';
+  const LECTURE_MS = 10000;
+  const MAX_CMD = 4;
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const lireJeton = () => { try { return localStorage.getItem(CLE); } catch { return null; } };
+  const garderJeton = (j) => { try { j ? localStorage.setItem(CLE, j) : localStorage.removeItem(CLE); } catch {} };
+
+  /* ── L'heure du magasin ── */
+  const FMT = new Intl.DateTimeFormat('fr-CA', { timeZone: TZ, hour: 'numeric', minute: '2-digit', hourCycle: 'h23' });
+  const FMT_JOUR = new Intl.DateTimeFormat('fr-CA', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long' });
+  const FMT_CLE = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' });
+  const hm = (d) => FMT.format(d).replace(/\s*h\s*/, ':');
+  const cleJour = (d) => FMT_CLE.format(d);
+  function horloge() {
+    const d = new Date();
+    $('horloge').textContent = hm(d);
+    $('jour').textContent = FMT_JOUR.format(d);
+  }
+
+  /* ── Les sons ── */
+  let ctx = null;
+  function audio() {
+    try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); } catch { ctx = null; }
+    return ctx;
+  }
+  function bip(notes, volume) {
+    const a = audio();
+    if (!a || a.state !== 'running') return;
+    notes.forEach(([f, t, d]) => {
+      const o = a.createOscillator(), g = a.createGain(), t0 = a.currentTime + t;
+      o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(volume, t0 + .02);
+      g.gain.setValueAtTime(volume, t0 + d - .05); g.gain.linearRampToValueAtTime(0, t0 + d);
+      o.connect(g).connect(a.destination); o.start(t0); o.stop(t0 + d + .02);
+    });
+  }
+  const dingAppel = () => bip([[880, 0, .35], [1320, .2, .5]], .35);
+  const carillon = () => bip([[659, 0, .5], [784, .28, .5], [988, .56, .9]], .25);
+  function verifierSon() {
+    const a = audio();
+    if (a && a.state === 'suspended') a.resume().catch(() => {});
+    setTimeout(() => { $('son').hidden = !(ctx && ctx.state !== 'running') || !$('porte').hidden; }, 400);
+  }
+  document.addEventListener('pointerdown', verifierSon);
+  document.addEventListener('keydown', verifierSon);
+
+  /* ── L'écran allumé ── */
+  let verrou = null;
+  async function garderAllume() {
+    try { if ('wakeLock' in navigator && !verrou) { verrou = await navigator.wakeLock.request('screen'); verrou.addEventListener('release', () => { verrou = null; }); } } catch {}
+  }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') garderAllume(); });
+
+  /* ── Le dessin ── */
+  let etat = null;          // la dernière lecture réussie
+  let vusAppels = null;     // les demandes déjà vues (null = première lecture : aucun son)
+  let avantEtiq = null;
+  let derniereReussite = 0;
+
+  function dessinerAppels(neuves) {
+    const a = etat.appels;
+    if (a === null) { $('appels').innerHTML = '<div class="rien"><b>Demandes pas lues</b></div>'; return; }
+    $('appels').innerHTML = a.length
+      ? a.map((x) => `<div class="banniere${neuves.has(x.id) ? ' neuve' : ''}">
+          <span class="photo">${x.photo ? `<img src="${esc(x.photo)}" alt="" onerror="this.remove()">` : ''}${x.photo ? '' : esc(String(x.nom).slice(0, 1))}${x.fois > 1 ? `<span class="fois">${x.fois}×</span>` : ''}</span>
+          <span class="nom">${esc(x.nom)}</span>
+          <span class="no${x.plancher === '2' ? ' p2' : ''}">${esc(x.plancher)}</span></div>`).join('')
+      : '<div class="rien"><b>Rien à aller chercher</b></div>';
+  }
+  function dessinerEtiquettes() {
+    const e = etat.etiquettes, el = $('etiq');
+    const n = e ? e.aImprimer : 0;
+    el.className = `carte etiq ${n ? 'alerte' : 'calme'}`;
+    el.innerHTML = e === null
+      ? '<div class="libelle">Étiquettes de prix</div><div class="mot">Pas lues</div>'
+      : n
+        ? `<div class="libelle">Étiquettes de prix</div><div class="mot">Changement d’étiquette demandé</div><div class="sous">${n} à imprimer</div>`
+        : '<div class="libelle">Étiquettes de prix</div><div class="mot">Aucun changement</div>';
+  }
+  function dessinerCommandes() {
+    const c = etat.commandes;
+    if (c === null) { $('plus').textContent = ''; $('heures').innerHTML = '<div class="vide">Commandes pas lues</div>'; return; }
+    const maintenant = Date.now(), auj = cleJour(new Date());
+    const quand = (m) => (m < 0 ? `En retard ${-m} min` : m <= 1 ? 'Le client arrive' : m < 60 ? `Dans ${m} min` : `Dans ${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`);
+    $('plus').textContent = c.length > MAX_CMD ? `+ ${c.length - MAX_CMD} autre${c.length - MAX_CMD > 1 ? 's' : ''}` : '';
+    $('heures').innerHTML = c.length
+      ? c.slice(0, MAX_CMD).map((o) => {
+          const d = new Date(o.cueillette), m = Math.floor((d.getTime() - maintenant) / 60000);
+          const aujourdhui = cleJour(d) <= auj;
+          return `<div class="h${m <= 15 ? ' r' : ''}"><b>${hm(d)}</b><i>${aujourdhui ? 'aujourd’hui' : 'demain'}</i>${aujourdhui ? `<span>${quand(m)}</span>` : ''}</div>`;
+        }).join('')
+      : '<div class="vide">Tout est prêt</div>';
+  }
+  function dessinerCotes() {
+    const tuiles = [];
+    if (Date.now() - derniereReussite > 30000) tuiles.push('<div class="cote panne"><small>Réseau</small><b>Pas de réseau</b></div>');
+    const c = etat.camions;
+    if (c === null) tuiles.push('<div class="cote zero"><small>Camion</small><b>Pas lu</b></div>');
+    else {
+      const p = c[0];
+      tuiles.push(`<div class="cote${p ? '' : ' zero'}${p && p.en_retard ? ' retard' : ''}"><small>${c.length > 1 ? `Camions · ${c.length}` : 'Camion'}</small><b>${p ? `${esc(p.fournisseur)}<em>${p.en_retard ? 'en retard' : esc(p.heure ?? 'aujourd’hui')}</em>` : 'Aucun'}</b></div>`);
+    }
+    $('cotes').innerHTML = tuiles.join('');
+  }
+  function dessiner(neuves = new Set()) {
+    if (!etat) return;
+    dessinerAppels(neuves); dessinerEtiquettes(); dessinerCommandes(); dessinerCotes();
+  }
+
+  /* ── La lecture ── */
+  async function lire() {
+    const jeton = lireJeton();
+    if (!jeton) return montrerPorte();
+    try {
+      const r = await fetch(API, { headers: { 'x-ecran': jeton }, cache: 'no-store' });
+      if (r.status === 401) { garderJeton(null); return montrerPorte(); }
+      if (!r.ok) throw new Error(String(r.status));
+      const j = await r.json();
+      // Une partie pas lue garde la dernière valeur connue plutôt que de clignoter.
+      etat = {
+        appels: j.appels ?? etat?.appels ?? null,
+        commandes: j.commandes ?? etat?.commandes ?? null,
+        etiquettes: j.etiquettes ?? etat?.etiquettes ?? null,
+        camions: j.camions ?? etat?.camions ?? null,
+      };
+      derniereReussite = Date.now();
+      const neuves = new Set();
+      if (j.appels) {
+        const ids = new Set(j.appels.map((a) => `${a.id}:${a.fois}`));
+        if (vusAppels) for (const a of j.appels) if (!vusAppels.has(`${a.id}:${a.fois}`)) neuves.add(a.id);
+        vusAppels = ids;
+      }
+      const n = j.etiquettes ? j.etiquettes.aImprimer : avantEtiq;
+      if (avantEtiq !== null && n > 0 && avantEtiq === 0) carillon();
+      else if (neuves.size) dingAppel();
+      avantEtiq = n;
+      montrerEcran();
+      dessiner(neuves);
+    } catch {
+      if (etat) dessinerCotes();
+    }
+  }
+
+  function montrerEcran() { $('porte').hidden = true; $('ecran').hidden = false; document.body.style.cursor = 'none'; }
+  function montrerPorte() {
+    $('ecran').hidden = true; $('porte').hidden = false; $('son').hidden = true; document.body.style.cursor = 'auto';
+    setTimeout(() => $('code').focus(), 50);
+  }
+
+  $('formCode').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    verifierSon();
+    const code = $('code').value.replace(/\D/g, '');
+    $('erreur').textContent = '';
+    if (code.length !== 6) { $('erreur').textContent = 'Le code a 6 chiffres.'; return; }
+    try {
+      const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.jeton) { $('erreur').textContent = j.error || 'Mauvais code.'; $('code').select(); return; }
+      garderJeton(j.jeton);
+      $('code').value = '';
+      await lire();
+    } catch {
+      $('erreur').textContent = 'Pas de réseau. Réessaie.';
+    }
+  });
+
+  horloge(); setInterval(horloge, 5000);
+  setInterval(lire, LECTURE_MS);
+  setInterval(() => dessiner(), 30000);   // les minutes avancent même sans nouvelle lecture
+  garderAllume();
+  lire().then(verifierSon);
+})();
+</script>
+</body>
+</html>
