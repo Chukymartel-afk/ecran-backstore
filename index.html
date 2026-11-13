@@ -76,6 +76,9 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
 .h.r::before { content: ""; position: absolute; width: 16cqw; height: 16cqw; right: -5cqw; top: -9cqw; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.22), rgba(0,0,0,0)); }
 .h.r i { color: rgba(255,255,255,.85); }
 .h.r span { color: #fff; background: rgba(0,0,0,.18); }
+/* 13 nov. — Keven : une commande pour demain, un peu grisée. */
+.h.demain { background: rgba(255,255,255,.55); box-shadow: none; }
+.h.demain b, .h.demain i { color: var(--gris-pale); }
 .vide { background: var(--blanc); border-radius: 2.4cqw; box-shadow: 0 .5cqw 1.4cqw rgba(0,0,0,.06); padding: 2cqw 2.2cqw; font-size: 3cqw; font-weight: 800; letter-spacing: -.03em; color: var(--gris-pale); }
 
 .droitecol { display: grid; grid-template-rows: auto 1fr; gap: 1cqw; min-height: 0; }
@@ -236,19 +239,14 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
       ? c.slice(0, MAX_CMD).map((o) => {
           const d = new Date(o.cueillette), m = Math.floor((d.getTime() - maintenant) / 60000);
           const aujourdhui = cleJour(d) <= auj;
-          return `<div class="h${m <= 15 ? ' r' : ''}"><b>${hm(d)}</b><i>${aujourdhui ? 'aujourd’hui' : 'demain'}</i>${aujourdhui ? `<span>${quand(m)}</span>` : ''}</div>`;
+          return `<div class="h${!aujourdhui ? ' demain' : m <= 15 ? ' r' : ''}"><b>${hm(d)}</b><i>${aujourdhui ? 'aujourd’hui' : 'demain'}</i>${aujourdhui ? `<span>${quand(m)}</span>` : ''}</div>`;
         }).join('')
       : '<div class="vide">Tout est prêt</div>';
   }
   function dessinerCotes() {
     const tuiles = [];
     if (Date.now() - derniereReussite > 30000) tuiles.push('<div class="cote panne"><small>Réseau</small><b>Pas de réseau</b></div>');
-    const c = etat.camions;
-    if (c === null) tuiles.push('<div class="cote zero"><small>Camion</small><b>Pas lu</b></div>');
-    else {
-      const p = c[0];
-      tuiles.push(`<div class="cote${p ? '' : ' zero'}${p && p.en_retard ? ' retard' : ''}"><small>${c.length > 1 ? `Camions · ${c.length}` : 'Camion'}</small><b>${p ? `${esc(p.fournisseur)}<em>${p.en_retard ? 'en retard' : esc(p.heure ?? 'aujourd’hui')}</em>` : 'Aucun'}</b></div>`);
-    }
+    // 13 nov. — Keven : « enlève le camion en haut ». Il ne reste que l'avis « Pas de réseau ».
     $('cotes').innerHTML = tuiles.join('');
   }
   function dessiner(neuves = new Set()) {
