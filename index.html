@@ -151,10 +151,12 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   const CLE = 'promo-ecran-backstore';
   const TZ = 'America/Toronto';
   const LECTURE_MS = 10000;
+  // 14 nov. — les demandes du plancher se relisent seules, plus souvent (lecture légère).
+  const APPELS_MS = 4000;
   const MAX_CMD = 4;
   // 13 nov. — la télé ne se recharge jamais : elle relit sa page toutes les 2 min et se
   // recharge quand une nouvelle version est publiée (changer VERSION à chaque envoi).
-  const VERSION = '2026-11-13-3';
+  const VERSION = '2026-11-14-1';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const lireJeton = () => { try { return localStorage.getItem(CLE); } catch { return null; } };
@@ -258,11 +260,11 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   }
 
   /* ── La lecture ── */
-  async function lire() {
+  async function lire(seulAppels) {
     const jeton = lireJeton();
     if (!jeton) return montrerPorte();
     try {
-      const r = await fetch(API + '?v=' + VERSION, { headers: { 'x-ecran': jeton }, cache: 'no-store' });
+      const r = await fetch(API + '?v=' + VERSION + (seulAppels === true ? '&seul=appels' : ''), { headers: { 'x-ecran': jeton }, cache: 'no-store' });
       if (r.status === 401) { garderJeton(null); return montrerPorte(); }
       if (!r.ok) throw new Error(String(r.status));
       const j = await r.json();
@@ -327,7 +329,8 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   setInterval(nouvelleVersion, 120000);
 
   horloge(); setInterval(horloge, 5000);
-  setInterval(lire, LECTURE_MS);
+  setInterval(() => lire(), LECTURE_MS);
+  setInterval(() => lire(true), APPELS_MS);
   setInterval(() => dessiner(), 30000);   // les minutes avancent même sans nouvelle lecture
   garderAllume();
   lire().then(verifierSon);
