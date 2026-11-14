@@ -51,6 +51,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
 
 .corps { display: grid; grid-template-columns: 1fr 1.3fr; gap: 1.8cqw; min-height: 0; }
 .gauche { display: grid; grid-template-rows: auto 1fr; gap: 1.8cqw; min-height: 0; }
+.gauche.seul { grid-template-rows: 1fr; }
 .carte { background: var(--blanc); border-radius: 2.4cqw; box-shadow: 0 .5cqw 1.4cqw rgba(0,0,0,.06); min-height: 0; }
 .libelle { font-size: 1.35cqw; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--gris-pale); }
 
@@ -70,15 +71,24 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   display: flex; align-items: center; gap: 1.2cqw; padding: 0 1.2cqw 0 1.9cqw; box-shadow: 0 .45cqw 1.2cqw rgba(0,0,0,.06);
 }
 .h b { position: relative; font-family: var(--noir); font-weight: 900; font-size: 3.1cqw; letter-spacing: -.05em; font-variant-numeric: tabular-nums; line-height: 1; }
-.h i { position: relative; flex: 1; font-style: normal; font-size: 1.7cqw; font-weight: 700; color: var(--gris); }
+/* 14 nov. — Keven ne voyait pas l'état : il est écrit gros, en noir (À préparer, En préparation, Terminée). */
+.h i { position: relative; flex: 1; font-style: normal; font-size: 2.2cqw; font-weight: 800; letter-spacing: -.02em; color: var(--encre); }
 .h span { position: relative; font-size: 1.6cqw; font-weight: 700; color: var(--gris); background: var(--ecran); border-radius: 999px; padding: .5cqw 1.2cqw; white-space: nowrap; }
 .h.r { background: linear-gradient(135deg, #F06266, #D93A40); color: #fff; box-shadow: inset 0 0 0 .1cqw rgba(255,255,255,.14), 0 .7cqw 1.6cqw rgba(217,58,64,.3); }
 .h.r::before { content: ""; position: absolute; width: 16cqw; height: 16cqw; right: -5cqw; top: -9cqw; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.22), rgba(0,0,0,0)); }
-.h.r i { color: rgba(255,255,255,.85); }
+.h.r i { color: #fff; }
+/* 14 nov. — Keven : le nom de la boîte sur la ligne, au-dessus de l'état. */
+.h i.deux { display: grid; line-height: 1.05; min-width: 0; }
+.h i.deux em { font-style: normal; font-size: 2.1cqw; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.h i.deux > span { all: unset; font-size: 1.5cqw; font-weight: 700; letter-spacing: 0; color: var(--gris); }
+.h.r i.deux > span { color: rgba(255,255,255,.85); }
+.h.demain i.deux em, .h.demain i.deux > span { color: var(--gris-pale); }
+.h.prep::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: .7cqw; background: var(--fonce); }
+.h.r.prep::after { background: #fff; }
 .h.r span { color: #fff; background: rgba(0,0,0,.18); }
 /* 14 nov. — Keven : la commande terminée passe au vert (5 min), puis s'en va. */
 .h.v { background: var(--vert); color: #fff; box-shadow: 0 .7cqw 1.6cqw rgba(40,165,90,.3); }
-.h.v i { color: rgba(255,255,255,.9); }
+.h.v i { color: #fff; }
 .h.v span { color: #fff; background: rgba(0,0,0,.16); font-family: var(--noir); font-weight: 900; }
 .h.v.neuve { animation: faite .5s cubic-bezier(.16,1,.3,1); }
 /* 13 nov. — Keven : une commande pour demain, un peu grisée. */
@@ -93,8 +103,9 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
 .banniere { flex: none; height: 9.6cqw; border-radius: 2.4cqw; background: var(--blanc); display: flex; align-items: center; gap: 1.8cqw; padding: 0 1.1cqw; box-shadow: 0 .45cqw 1.2cqw rgba(0,0,0,.06); }
 .banniere.neuve { animation: arrive .42s cubic-bezier(.33,1,.68,1); }
 @keyframes arrive { from { opacity: 0; transform: translateY(5cqw); } to { opacity: 1; transform: none; } }
-.photo { position: relative; width: 7.6cqw; height: 7.6cqw; border-radius: 1.7cqw; flex: none; background: var(--ecran); display: grid; place-items: center; font-size: 3.6cqw; font-weight: 800; color: var(--gris-pale); }
-.photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 1.7cqw; display: block; }
+/* 14 nov. — Keven : la photo du produit posée dans la bannière, sans cadre ni fond. */
+.photo { position: relative; width: 8.2cqw; height: 8.2cqw; flex: none; display: grid; place-items: center; font-size: 3.6cqw; font-weight: 800; color: var(--gris-pale); }
+.photo img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .fois { position: absolute; right: -.7cqw; top: -.7cqw; min-width: 3.2cqw; height: 3.2cqw; padding: 0 .7cqw; border-radius: 999px; background: var(--fonce); color: #fff; display: grid; place-items: center; font-family: var(--noir); font-weight: 900; font-size: 1.7cqw; box-shadow: 0 0 0 .3cqw var(--blanc); }
 .nom { flex: 1; min-width: 0; font-size: 3.4cqw; font-weight: 700; letter-spacing: -.035em; line-height: 1.05; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .no { width: 7.6cqw; height: 7.6cqw; border-radius: 1.9cqw; flex: none; display: grid; place-items: center; font-family: var(--noir); font-weight: 900; font-size: 4.8cqw; color: #fff; background: var(--fonce); }
@@ -102,7 +113,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
 /* 14 nov. — Keven : la bannière passe au vert quand le Backstore a coché. */
 .banniere.faite { background: var(--vert); color: #fff; box-shadow: 0 .7cqw 1.6cqw rgba(40,165,90,.3); animation: faite .5s cubic-bezier(.16,1,.3,1); }
 .banniere.faite .no, .banniere.faite .no.p2 { background: rgba(0,0,0,.16); }
-.banniere.faite .photo { background: rgba(255,255,255,.2); color: #fff; }
+.banniere.faite .photo { color: #fff; }
 @keyframes faite { from { transform: scale(.96); } to { transform: none; } }
 .rien { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
 .rien b { font-size: 3.4cqw; font-weight: 700; letter-spacing: -.035em; color: var(--gris-pale); }
@@ -135,6 +146,32 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
 @keyframes feteSort { to { opacity: 0; } }
 @keyframes feteMonte { from { opacity: 0; transform: translateY(1.6cqw); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .fete, .fete * { animation: none !important; } .roue > i { transition: none; } }
+/* 14 nov. — une commande en ligne rentre. Keven : plein écran, fond transparent, entre par la
+   gauche, ralentit au centre, repart à droite ; « trop longue », « clean, high-tech, pas gadget ».
+   2,6 s. Un voile sombre, une étiquette, l'heure, un trait fin qui se trace. transform + opacity. */
+.arrivee { position: absolute; inset: 0; z-index: 19; display: grid; place-items: center; overflow: hidden; color: #fff; background: rgba(0,0,0,.92); animation: feteEntre .25s ease-out both; }
+.arrivee.sort { animation: feteSort .35s ease-in both; }
+.arrivee .centre { display: grid; justify-items: center; line-height: 1; white-space: nowrap; will-change: transform, opacity; animation: arriveePasse 2.5s both .05s; }
+/* 14 nov. — Keven : « clean », mais dans le branding PROMO (pas de lettres fines) : Outfit 800 comme
+   les iPads, l'étiquette comme les libellés de la télé, le vert plein en seul accent, un trait fin. */
+.arrivee .mot { font-size: 1.5cqw; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--vert); margin-right: -.14em; }
+.arrivee .titre { font-weight: 800; font-size: 8.6cqw; line-height: 1.05; letter-spacing: -.045em; margin-top: 1.2cqw; }
+.arrivee .boite { font-weight: 700; font-size: 3.4cqw; letter-spacing: -.035em; margin-top: 2cqw; }
+.arrivee .cueille { font-size: 1.8cqw; font-weight: 600; color: rgba(255,255,255,.55); margin-top: 1cqw; }
+.arrivee .cueille b { font-family: var(--noir); font-weight: 900; letter-spacing: -.04em; color: #fff; font-variant-numeric: tabular-nums; margin-left: .3em; }
+.arrivee .trait { width: 100%; height: .15cqw; margin-top: 2cqw; background: rgba(255,255,255,.3); transform-origin: left; animation: arriveeTrait 2.5s both .05s; }
+@keyframes arriveePasse {
+  0% { opacity: 0; transform: translateX(-38cqw); animation-timing-function: cubic-bezier(.16,1,.3,1); }
+  26% { opacity: 1; transform: translateX(-1.2cqw); animation-timing-function: linear; }
+  76% { opacity: 1; transform: translateX(1.2cqw); animation-timing-function: cubic-bezier(.7,0,.84,0); }
+  100% { opacity: 0; transform: translateX(38cqw); }
+}
+@keyframes arriveeTrait {
+  0%, 12% { transform: scaleX(0); animation-timing-function: cubic-bezier(.65,0,.35,1); }
+  48% { transform: scaleX(1); }
+  100% { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: reduce) { .arrivee, .arrivee * { animation: none !important; } }
 .son { position: absolute; left: 50%; bottom: 1.2cqw; transform: translateX(-50%); background: var(--encre); color: #fff; font-size: 1.5cqw; font-weight: 700; border-radius: 999px; padding: .7cqw 1.6cqw; cursor: auto; }
 </style>
 </head>
@@ -147,10 +184,10 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
       <div class="heure"><b id="horloge">--:--</b><small id="jour"></small></div>
     </div>
     <div class="corps">
-      <div class="gauche">
+      <div class="gauche" id="gauche">
         <section class="carte etiq calme" id="etiq"></section>
         <section class="cmd">
-          <div class="libelle"><span>Commandes pas prêtes</span><span id="plus"></span></div>
+          <div class="libelle"><span>Commandes en ligne</span><span id="plus"></span></div>
           <div class="heures" id="heures"></div>
         </section>
       </div>
@@ -173,6 +210,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   <div class="fete" id="fete" hidden>
     <div class="centre"><div class="chiffre" id="feteChiffre"></div><div class="mot">clients aujourd’hui</div></div>
   </div>
+  <div class="arrivee" id="arrivee" hidden><div class="centre"><div class="mot" id="arriveeMot"></div><div class="titre" id="arriveeTitre"></div><div class="trait"></div><div class="boite" id="arriveeBoite"></div><div class="cueille" id="arriveeHeure"></div></div></div>
   <div class="son" id="son" hidden>Touchez l’écran une fois pour le son</div>
 </div>
 
@@ -184,10 +222,10 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   const LECTURE_MS = 10000;
   // 14 nov. — les demandes du plancher se relisent seules, plus souvent (lecture légère).
   const APPELS_MS = 4000;
-  const MAX_CMD = 4;
+  const MAX_CMD = 4, MAX_CMD_SEUL = 6;
   // 13 nov. — la télé ne se recharge jamais : elle relit sa page toutes les 2 min et se
   // recharge quand une nouvelle version est publiée (changer VERSION à chaque envoi).
-  const VERSION = '2026-11-14-6';
+  const VERSION = '2026-11-14-7';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const lireJeton = () => { try { return localStorage.getItem(CLE); } catch { return null; } };
@@ -240,16 +278,18 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   /** Les chiffres roulent, un après l'autre, des 100 d'avant jusqu'au palier. */
   function rouler(el, de, a) {
     const cible = String(a), depart = String(de).padStart(cible.length, '0');
-    el.innerHTML = [...cible].map(() => `<span class="roue"><i>${[...'0123456789'].map((d) => `<b>${d}</b>`).join('').repeat(2)}</i></span>`).join('');
+    // Un signe qui n'est pas un chiffre (les deux-points d'une heure) reste fixe.
+    el.innerHTML = [...cible].map((c) => (/\d/.test(c) ? `<span class="roue"><i>${[...'0123456789'].map((d) => `<b>${d}</b>`).join('').repeat(2)}</i></span>` : `<span>${esc(c)}</span>`)).join('');
     const roues = [...el.querySelectorAll('.roue > i')];
+    const places = [...cible].map((c, i) => i).filter((i) => /\d/.test(cible[i]));
     const hauteur = 100 / 20;   // un chiffre = 5 % de la colonne (20 chiffres)
-    roues.forEach((r, i) => { r.style.transition = 'none'; r.style.transform = `translateY(-${Number(depart[i]) * hauteur}%)`; });
+    roues.forEach((r, k) => { r.style.transition = 'none'; r.style.transform = `translateY(-${Number(depart[places[k]]) * hauteur}%)`; });
     void el.offsetHeight;
-    roues.forEach((r, i) => {
-      const avant = Number(depart[i]), apres = Number(cible[i]);
+    roues.forEach((r, k) => {
+      const i = places[k], avant = Number(depart[i]), apres = Number(cible[i]);
       // Toujours vers le haut : un chiffre qui ne monte pas fait un tour complet (2e jeu de chiffres).
       const pas = apres > avant ? apres : apres + 10;
-      r.style.transition = ''; r.style.transitionDelay = `${.15 + (roues.length - 1 - i) * .1}s`;
+      r.style.transition = ''; r.style.transitionDelay = `${.15 + (roues.length - 1 - k) * .1}s`;
       r.style.transform = `translateY(-${pas * hauteur}%)`;
     });
   }
@@ -275,6 +315,47 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
     if (deja !== null && atteint > 0) feter(atteint);
   }
 
+  /* ── Une commande en ligne rentre (14 nov.) ── */
+  const ARRIVEE_MS = 2600;
+  /** Le son d'une commande (14 nov.) : Keven, les notes tenues « ressemblent trop aux autres », les
+   *  « bloups » = « bizarre ». Donc un « ding-dong » de porte de magasin, qui DESCEND (tous les autres
+   *  sons de la télé montent), avec un timbre de cloche : une attaque nette, une longue fin douce. */
+  function carillonCommande() {
+    const a = audio();
+    if (!a || a.state !== 'running') return;
+    const cloche = (f, t, fin) => {
+      [[f, .3, fin], [f * 2, .08, fin * .6], [f * 3, .03, fin * .35]].forEach(([hz, vol, d]) => {
+        const o = a.createOscillator(), g = a.createGain(), t0 = a.currentTime + t;
+        o.type = 'sine'; o.frequency.value = hz;
+        g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + .005);
+        g.gain.exponentialRampToValueAtTime(.0001, t0 + d);
+        o.connect(g).connect(a.destination); o.start(t0); o.stop(t0 + d + .05);
+      });
+    };
+    cloche(659.25, 0, 1.4);     // ding (mi)
+    cloche(523.25, .42, 2);     // dong (do)
+  }
+  let arriveeEnCours = false;
+  /** L'annonce traverse l'écran : entre à gauche, ralentit au centre, sort à droite. */
+  function annoncer(neuves) {
+    // Jamais par-dessus la fête des 100 clients : on attend qu'elle finisse.
+    if (feteEnCours || arriveeEnCours) { setTimeout(() => annoncer(neuves), 1000); return; }
+    arriveeEnCours = true;
+    const el = $('arrivee'), d = new Date(neuves[0].cueillette), heure = hm(d);
+    const demain = cleJour(d) > cleJour(new Date());
+    const plusieurs = neuves.length > 1, boite = neuves.find((o) => o.boite)?.boite || '';
+    $('arriveeMot').textContent = plusieurs ? `${neuves.length} nouvelles commandes` : 'Nouvelle commande';
+    $('arriveeTitre').textContent = plusieurs ? 'Commandes en ligne' : 'Commande en ligne';
+    $('arriveeBoite').textContent = boite; $('arriveeBoite').hidden = !boite;
+    $('arriveeHeure').innerHTML = `Cueillette ${demain ? 'demain ' : ''}<b>${esc(heure)}</b>`;
+    // Rejoue l'animation même si elle vient de jouer.
+    el.querySelectorAll('.centre, .trait').forEach((x) => { x.style.animation = 'none'; void x.offsetWidth; x.style.animation = ''; });
+    el.classList.remove('sort'); el.hidden = false;
+    carillonCommande();
+    setTimeout(() => el.classList.add('sort'), ARRIVEE_MS - 350);
+    setTimeout(() => { el.hidden = true; arriveeEnCours = false; }, ARRIVEE_MS);
+  }
+
   /* ── L'écran allumé ── */
   let verrou = null;
   async function garderAllume() {
@@ -288,6 +369,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   let avantEtiq = null;
   let faitesDessinees = new Set();
   let vertesDessinees = new Set();   // les commandes terminées déjà montrées en vert   // les demandes déjà montrées en vert
+  let vusCmd = null;        // les commandes pas prêtes déjà vues (null = première lecture : aucune annonce)
   let vusEtiq = null;       // les étiquettes demandées déjà vues (null = première lecture : aucun son)
   let derniereReussite = 0;
 
@@ -309,6 +391,9 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
     const n = e ? e.aImprimer : 0;
     // 14 nov. — les étiquettes DEMANDÉES par le plancher passent devant : la carte rouge les nomme.
     const d = etat.demandesEtiq || [];
+    // 14 nov. — Keven : rien à imprimer = la carte disparaît et les commandes montent.
+    const rien = e !== null && !n && !d.length;
+    el.hidden = rien; $('gauche').classList.toggle('seul', rien);
     if (d.length) {
       const noms = d.slice(0, 3).map((x) => `${esc(x.nom)}${x.format ? ` (${x.format}${x.quantite > 1 ? ` × ${x.quantite}` : ''})` : ''}`).join(' · ');
       el.className = 'carte etiq alerte';
@@ -330,7 +415,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
     const quand = (m) => (m < 0 ? `En retard ${-m} min` : m <= 1 ? 'Le client arrive' : m < 60 ? `Dans ${m} min` : `Dans ${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`);
     // Les terminées (vertes, 2 au plus) en haut ; les pas prêtes remplissent le reste des 4 places.
     const vertes = c.filter((o) => o.prete).slice(-2), reste = c.filter((o) => !o.prete);
-    const places = MAX_CMD - vertes.length, enTrop = reste.length - places;
+    const places = ($('etiq').hidden ? MAX_CMD_SEUL : MAX_CMD) - vertes.length, enTrop = reste.length - places;
     const dejaVertes = vertesDessinees;
     vertesDessinees = new Set(vertes.map((o) => o.id));
     $('plus').textContent = enTrop > 0 ? `+ ${enTrop} autre${enTrop > 1 ? 's' : ''}` : '';
@@ -338,8 +423,12 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
       ? [...vertes, ...reste.slice(0, places)].map((o) => {
           const d = new Date(o.cueillette), m = Math.floor((d.getTime() - maintenant) / 60000);
           const aujourdhui = cleJour(d) <= auj;
-          if (o.prete) return `<div class="h v${dejaVertes.has(o.id) ? '' : ' neuve'}"><b>${hm(d)}</b><i>terminée</i><span>✓</span></div>`;
-          return `<div class="h${!aujourdhui ? ' demain' : m <= 15 ? ' r' : ''}"><b>${hm(d)}</b><i>${aujourdhui ? 'aujourd’hui' : 'demain'}</i>${aujourdhui ? `<span>${quand(m)}</span>` : ''}</div>`;
+          if (o.prete) return `<div class="h v${dejaVertes.has(o.id) ? '' : ' neuve'}"><b>${hm(d)}</b><i>Terminée</i><span>✓</span></div>`;
+          // 14 nov. — Keven : la ligne dit juste « Régulier » ou le nom de la boîte. En préparation : une barre
+          // à gauche et l'heure où elle a été prise.
+          const sorte = esc(o.boite || 'Régulier');
+          const prise = o.enPrep ? `<span>En préparation${o.prepDepuis ? ` · ${hm(new Date(o.prepDepuis))}` : ''}</span>` : '';
+          return `<div class="h${!aujourdhui ? ' demain' : m <= 15 ? ' r' : ''}${o.enPrep ? ' prep' : ''}"><b>${hm(d)}</b><i class="deux"><em>${sorte}</em>${prise}</i><span>${aujourdhui ? quand(m) : 'Demain'}</span></div>`;
         }).join('')
       : '<div class="vide">Tout est prêt</div>';
   }
@@ -393,6 +482,13 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
       avantEtiq = n;
       montrerEcran();
       dessiner(neuves);
+      // Une commande pas prête qu'on n'avait pas à la lecture d'avant : l'annonce (la plus proche d'abord).
+      if (j.commandes) {
+        const ouvertes = j.commandes.filter((o) => !o.prete);
+        const cmdNeuves = vusCmd ? ouvertes.filter((o) => !vusCmd.has(o.id)) : [];
+        vusCmd = new Set([...(vusCmd ?? []), ...ouvertes.map((o) => o.id)].slice(-400));
+        if (cmdNeuves.length) annoncer(cmdNeuves.sort((a, b) => new Date(a.cueillette) - new Date(b.cueillette)));
+      }
       if (typeof j.clients === 'number') noterClients(j.clients);
     } catch {
       if (etat) dessinerCotes();
@@ -435,16 +531,20 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   setInterval(nouvelleVersion, 120000);
 
   horloge(); setInterval(horloge, 5000);
+  // ?demo=commande : un aperçu de la commande qui rentre (un clic la rejoue).
   // ?demo=300 : un aperçu de la fête avec de fausses demandes, sans code ni réseau (un clic la rejoue).
   const DEMO = new URLSearchParams(location.search).get('demo');
   if (DEMO !== null) {
     const palier = Math.max(PALIER, Math.round((Number(DEMO) || PALIER) / PALIER) * PALIER);
     etat = { appels: [{ id: 'f', nom: 'Ananas', photo: null, plancher: '1', fois: 1, fait: DEMO === 'fait' }, { id: 'a', nom: 'Bleuet', photo: null, plancher: '1', fois: 1 }, { id: 'b', nom: 'Melon d’eau quartier', photo: null, plancher: '2', fois: 2 }],
-      commandes: DEMO === 'fait' ? [{ id: 'c1', cueillette: new Date(Date.now() + 40 * 60000).toISOString(), prete: true }, { id: 'c2', cueillette: new Date(Date.now() + 12 * 60000).toISOString(), prete: false }, { id: 'c3', cueillette: new Date(Date.now() + 95 * 60000).toISOString(), prete: false }] : [], etiquettes: { aImprimer: 0 }, camions: null,
+      commandes: DEMO === 'commande' ? [{ id: 'c1', cueillette: new Date(Date.now() + 20 * 60000).toISOString(), prete: true }, { id: 'c2', cueillette: new Date(Date.now() + 9 * 60000).toISOString(), prete: false, enPrep: true, prepDepuis: new Date(Date.now() - 14 * 60000).toISOString() }, { id: 'c3', cueillette: new Date(Date.now() + 50 * 60000).toISOString(), prete: false, enPrep: true }, { id: 'c4', cueillette: new Date(Date.now() + 95 * 60000).toISOString(), prete: false, boite: 'Boîte liquidation', enPrep: true, prepDepuis: new Date(Date.now() - 6 * 60000).toISOString() }, { id: 'c5', cueillette: new Date(Date.now() + 160 * 60000).toISOString(), prete: false }, { id: 'c6', cueillette: new Date(Date.now() + 26 * 3600000).toISOString(), prete: false }] : DEMO === 'fait' ? [{ id: 'c1', cueillette: new Date(Date.now() + 40 * 60000).toISOString(), prete: true }, { id: 'c2', cueillette: new Date(Date.now() + 12 * 60000).toISOString(), prete: false }, { id: 'c3', cueillette: new Date(Date.now() + 95 * 60000).toISOString(), prete: false }] : [], etiquettes: { aImprimer: 0 }, camions: null,
       demandesEtiq: DEMO === 'etiquette' ? [{ id: 'e1', nom: 'Canneberges', plancher: '1', fois: 1, quantite: 1, format: 'grande' }, { id: 'e2', nom: 'Melon miel', plancher: '1', fois: 1, quantite: 2, format: 'petite' }] : [] };
     derniereReussite = Date.now();
     montrerEcran(); dessiner();
-    if (DEMO !== 'etiquette' && DEMO !== 'fait') { setTimeout(() => feter(palier), 700); document.addEventListener('pointerdown', () => feter(palier)); }
+    if (DEMO === 'commande') {
+      const fausse = () => annoncer([{ id: 'n', cueillette: new Date(Date.now() + 75 * 60000).toISOString(), prete: false, boite: 'Boîte liquidation' }]);
+      setTimeout(fausse, 700); document.addEventListener('pointerdown', fausse);
+    } else if (DEMO !== 'etiquette' && DEMO !== 'fait') { setTimeout(() => feter(palier), 700); document.addEventListener('pointerdown', () => feter(palier)); }
     return;
   }
   setInterval(() => lire(), LECTURE_MS);
