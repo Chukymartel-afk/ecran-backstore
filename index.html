@@ -73,6 +73,11 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
 .h b { position: relative; font-family: var(--noir); font-weight: 900; font-size: 3.1cqw; letter-spacing: -.05em; font-variant-numeric: tabular-nums; line-height: 1; }
 /* 14 nov. — Keven ne voyait pas l'état : il est écrit gros, en noir (À préparer, En préparation, Terminée). */
 .h i { position: relative; flex: 1; font-style: normal; font-size: 2.2cqw; font-weight: 800; letter-spacing: -.02em; color: var(--encre); }
+.h i { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+/* 14 nov. — le temps qui reste, gros et à droite, sans pastille. */
+.h span.reste { background: none; padding: 0 .4cqw 0 0; font-family: var(--noir); font-weight: 900; font-size: 2.4cqw; letter-spacing: -.04em; color: var(--encre); }
+.h.r span.reste { background: none; color: #fff; }
+.h.demain span.reste { color: var(--gris-pale); font-family: var(--texte); font-weight: 700; font-size: 1.9cqw; letter-spacing: -.02em; }
 .h span { position: relative; font-size: 1.6cqw; font-weight: 700; color: var(--gris); background: var(--ecran); border-radius: 999px; padding: .5cqw 1.2cqw; white-space: nowrap; }
 .h.r { background: linear-gradient(135deg, #F06266, #D93A40); color: #fff; box-shadow: inset 0 0 0 .1cqw rgba(255,255,255,.14), 0 .7cqw 1.6cqw rgba(217,58,64,.3); }
 .h.r::before { content: ""; position: absolute; width: 16cqw; height: 16cqw; right: -5cqw; top: -9cqw; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.22), rgba(0,0,0,0)); }
@@ -83,8 +88,6 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
 .h i.deux > span { all: unset; font-size: 1.5cqw; font-weight: 700; letter-spacing: 0; color: var(--gris); }
 .h.r i.deux > span { color: rgba(255,255,255,.85); }
 .h.demain i.deux em, .h.demain i.deux > span { color: var(--gris-pale); }
-.h.prep::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: .7cqw; background: var(--fonce); }
-.h.r.prep::after { background: #fff; }
 .h.r span { color: #fff; background: rgba(0,0,0,.18); }
 /* 14 nov. — Keven : la commande terminée passe au vert (5 min), puis s'en va. */
 .h.v { background: var(--vert); color: #fff; box-shadow: 0 .7cqw 1.6cqw rgba(40,165,90,.3); }
@@ -225,7 +228,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   const MAX_CMD = 4, MAX_CMD_SEUL = 6;
   // 13 nov. — la télé ne se recharge jamais : elle relit sa page toutes les 2 min et se
   // recharge quand une nouvelle version est publiée (changer VERSION à chaque envoi).
-  const VERSION = '2026-11-14-7';
+  const VERSION = '2026-11-14-8';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const lireJeton = () => { try { return localStorage.getItem(CLE); } catch { return null; } };
@@ -412,7 +415,8 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
     const c = etat.commandes;
     if (c === null) { $('plus').textContent = ''; $('heures').innerHTML = '<div class="vide">Commandes pas lues</div>'; return; }
     const maintenant = Date.now(), auj = cleJour(new Date());
-    const quand = (m) => (m < 0 ? `En retard ${-m} min` : m <= 1 ? 'Le client arrive' : m < 60 ? `Dans ${m} min` : `Dans ${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`);
+    // Le temps qui reste, court (sans « Dans ») : le nom de la boîte garde sa place.
+    const quand = (m) => (m < 0 ? `Retard ${-m} min` : m <= 1 ? 'Maintenant' : m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`);
     // Les terminées (vertes, 2 au plus) en haut ; les pas prêtes remplissent le reste des 4 places.
     const vertes = c.filter((o) => o.prete).slice(-2), reste = c.filter((o) => !o.prete);
     const places = ($('etiq').hidden ? MAX_CMD_SEUL : MAX_CMD) - vertes.length, enTrop = reste.length - places;
@@ -424,11 +428,9 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
           const d = new Date(o.cueillette), m = Math.floor((d.getTime() - maintenant) / 60000);
           const aujourdhui = cleJour(d) <= auj;
           if (o.prete) return `<div class="h v${dejaVertes.has(o.id) ? '' : ' neuve'}"><b>${hm(d)}</b><i>Terminée</i><span>✓</span></div>`;
-          // 14 nov. — Keven : la ligne dit juste « Régulier » ou le nom de la boîte. En préparation : une barre
-          // à gauche et l'heure où elle a été prise.
-          const sorte = esc(o.boite || 'Régulier');
-          const prise = o.enPrep ? `<span>En préparation${o.prepDepuis ? ` · ${hm(new Date(o.prepDepuis))}` : ''}</span>` : '';
-          return `<div class="h${!aujourdhui ? ' demain' : m <= 15 ? ' r' : ''}${o.enPrep ? ' prep' : ''}"><b>${hm(d)}</b><i class="deux"><em>${sorte}</em>${prise}</i><span>${aujourdhui ? quand(m) : 'Demain'}</span></div>`;
+          // 14 nov. — Keven : l'heure de cueillette fixe à gauche, « Régulier » ou le nom de la boîte au
+          // milieu, le temps qui reste à droite ; en rouge sous 1 h.
+          return `<div class="h${!aujourdhui ? ' demain' : m < 60 ? ' r' : ''}"><b>${hm(d)}</b><i>${esc(o.boite || 'Régulier')}</i><span class="reste">${aujourdhui ? quand(m) : 'Demain'}</span></div>`;
         }).join('')
       : '<div class="vide">Tout est prêt</div>';
   }
