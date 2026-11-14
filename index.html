@@ -107,6 +107,24 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
 .porte input:focus { outline: none; border-color: var(--encre); }
 .porte button { width: 100%; font: 800 2cqw var(--texte); color: #fff; background: var(--encre); border: 0; border-radius: 999px; padding: 1.1cqw; cursor: pointer; }
 .porte .erreur { font-size: 1.5cqw; font-weight: 700; color: var(--rouge); min-height: 1.8cqw; }
+/* 14 nov. — la fête des 100 clients. Keven : « trop gadget, c'est laid » (éclats, lueurs).
+   Donc rien que de la typo : l'écran passe au noir, un chiffre géant roule et se pose, une
+   ligne en dessous. Une seule couleur. Que des transform et des opacity. */
+.fete { position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; overflow: hidden; color: #fff; background: #000; animation: feteEntre .6s cubic-bezier(.16,1,.3,1) both; }
+.fete.sort { animation: feteSort .8s cubic-bezier(.4,0,.2,1) both; }
+.fete .centre { text-align: center; line-height: 1; animation: feteRespire 8s linear both; }
+@keyframes feteRespire { from { transform: scale(1); } to { transform: scale(1.045); } }
+.fete .chiffre { display: flex; justify-content: center; font-family: var(--texte); font-weight: 700; font-size: 36cqw; letter-spacing: 0; line-height: 1.02; font-variant-numeric: tabular-nums;
+  animation: fetePose 1.5s cubic-bezier(.16,1,.3,1) both .1s; }
+@keyframes fetePose { 0% { opacity: 0; transform: scale(1.22); filter: blur(1.4cqw); } 35% { opacity: 1; } 100% { opacity: 1; transform: none; filter: blur(0); } }
+.roue { display: block; height: 1.02em; overflow: hidden; margin: 0 -.034em; padding: 0 .01em; }
+.roue > i { display: block; font-style: normal; transition: transform 1.5s cubic-bezier(.16,1,.3,1); will-change: transform; }
+.roue > i > b { display: block; height: 1.02em; font-weight: 700; }
+.fete .mot { font-size: 3.1cqw; font-weight: 600; letter-spacing: -.02em; color: rgba(255,255,255,.55); margin-top: .6cqw; animation: feteMonte 1s cubic-bezier(.16,1,.3,1) both 1.5s; }
+@keyframes feteEntre { from { opacity: 0; } to { opacity: 1; } }
+@keyframes feteSort { to { opacity: 0; } }
+@keyframes feteMonte { from { opacity: 0; transform: translateY(1.6cqw); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .fete, .fete * { animation: none !important; } .roue > i { transition: none; } }
 .son { position: absolute; left: 50%; bottom: 1.2cqw; transform: translateX(-50%); background: var(--encre); color: #fff; font-size: 1.5cqw; font-weight: 700; border-radius: 999px; padding: .7cqw 1.6cqw; cursor: auto; }
 </style>
 </head>
@@ -142,6 +160,9 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
       <div class="erreur" id="erreur"></div>
     </form>
   </div>
+  <div class="fete" id="fete" hidden>
+    <div class="centre"><div class="chiffre" id="feteChiffre"></div><div class="mot">clients aujourd’hui</div></div>
+  </div>
   <div class="son" id="son" hidden>Touchez l’écran une fois pour le son</div>
 </div>
 
@@ -156,7 +177,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   const MAX_CMD = 4;
   // 13 nov. — la télé ne se recharge jamais : elle relit sa page toutes les 2 min et se
   // recharge quand une nouvelle version est publiée (changer VERSION à chaque envoi).
-  const VERSION = '2026-11-14-2';
+  const VERSION = '2026-11-14-3';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const lireJeton = () => { try { return localStorage.getItem(CLE); } catch { return null; } };
@@ -200,6 +221,49 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   }
   document.addEventListener('pointerdown', verifierSon);
   document.addEventListener('keydown', verifierSon);
+
+  /* ── La fête des 100 clients (14 nov.) ── */
+  const PALIER = 100, FETE_MS = 7000, CLE_FETE = 'promo-ecran-fete';
+  // Deux notes douces, longues (pas une fanfare).
+  const carillonFete = () => bip([[784, 0, 1.2], [1175, .16, 1.8]], .16);
+  let feteEnCours = false;
+  /** Les chiffres roulent, un après l'autre, des 100 d'avant jusqu'au palier. */
+  function rouler(el, de, a) {
+    const cible = String(a), depart = String(de).padStart(cible.length, '0');
+    el.innerHTML = [...cible].map(() => `<span class="roue"><i>${[...'0123456789'].map((d) => `<b>${d}</b>`).join('').repeat(2)}</i></span>`).join('');
+    const roues = [...el.querySelectorAll('.roue > i')];
+    const hauteur = 100 / 20;   // un chiffre = 5 % de la colonne (20 chiffres)
+    roues.forEach((r, i) => { r.style.transition = 'none'; r.style.transform = `translateY(-${Number(depart[i]) * hauteur}%)`; });
+    void el.offsetHeight;
+    roues.forEach((r, i) => {
+      const avant = Number(depart[i]), apres = Number(cible[i]);
+      // Toujours vers le haut : un chiffre qui ne monte pas fait un tour complet (2e jeu de chiffres).
+      const pas = apres > avant ? apres : apres + 10;
+      r.style.transition = ''; r.style.transitionDelay = `${.15 + (roues.length - 1 - i) * .1}s`;
+      r.style.transform = `translateY(-${pas * hauteur}%)`;
+    });
+  }
+  function feter(palier) {
+    if (feteEnCours) return;
+    feteEnCours = true;
+    const el = $('fete');
+    el.classList.remove('sort'); el.hidden = false;
+    rouler($('feteChiffre'), Math.max(0, palier - PALIER), palier);
+    carillonFete();
+    setTimeout(() => el.classList.add('sort'), FETE_MS - 800);
+    setTimeout(() => { el.hidden = true; feteEnCours = false; }, FETE_MS);
+  }
+  /** Le compte des clients du jour : une fête à chaque centaine franchie, une seule fois. */
+  function noterClients(n) {
+    const jour = cleJour(new Date()), atteint = Math.floor(n / PALIER) * PALIER;
+    let vu = null;
+    try { vu = JSON.parse(localStorage.getItem(CLE_FETE) || 'null'); } catch { vu = null; }
+    const deja = vu && vu.jour === jour ? vu.palier : null;
+    if (deja !== null && atteint <= deja) return;
+    try { localStorage.setItem(CLE_FETE, JSON.stringify({ jour, palier: atteint })); } catch {}
+    // La première lecture du jour note le palier sans fête (il a été franchi avant).
+    if (deja !== null && atteint > 0) feter(atteint);
+  }
 
   /* ── L'écran allumé ── */
   let verrou = null;
@@ -288,6 +352,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
       avantEtiq = n;
       montrerEcran();
       dessiner(neuves);
+      if (typeof j.clients === 'number') noterClients(j.clients);
     } catch {
       if (etat) dessinerCotes();
     }
@@ -329,6 +394,18 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   setInterval(nouvelleVersion, 120000);
 
   horloge(); setInterval(horloge, 5000);
+  // ?demo=300 : un aperçu de la fête avec de fausses demandes, sans code ni réseau (un clic la rejoue).
+  const DEMO = new URLSearchParams(location.search).get('demo');
+  if (DEMO !== null) {
+    const palier = Math.max(PALIER, Math.round((Number(DEMO) || PALIER) / PALIER) * PALIER);
+    etat = { appels: [{ id: 'a', nom: 'Bleuet', photo: null, plancher: '1', fois: 1 }, { id: 'b', nom: 'Melon d’eau quartier', photo: null, plancher: '2', fois: 2 }],
+      commandes: [], etiquettes: { aImprimer: 0 }, camions: null };
+    derniereReussite = Date.now();
+    montrerEcran(); dessiner();
+    setTimeout(() => feter(palier), 700);
+    document.addEventListener('pointerdown', () => feter(palier));
+    return;
+  }
   setInterval(() => lire(), LECTURE_MS);
   setInterval(() => lire(true), APPELS_MS);
   setInterval(() => dessiner(), 30000);   // les minutes avancent même sans nouvelle lecture
