@@ -177,7 +177,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   const MAX_CMD = 4;
   // 13 nov. — la télé ne se recharge jamais : elle relit sa page toutes les 2 min et se
   // recharge quand une nouvelle version est publiée (changer VERSION à chaque envoi).
-  const VERSION = '2026-11-14-3';
+  const VERSION = '2026-11-14-4';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const lireJeton = () => { try { return localStorage.getItem(CLE); } catch { return null; } };
@@ -276,6 +276,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   let etat = null;          // la dernière lecture réussie
   let vusAppels = null;     // les demandes déjà vues (null = première lecture : aucun son)
   let avantEtiq = null;
+  let vusEtiq = null;       // les étiquettes demandées déjà vues (null = première lecture : aucun son)
   let derniereReussite = 0;
 
   function dessinerAppels(neuves) {
@@ -291,6 +292,15 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   function dessinerEtiquettes() {
     const e = etat.etiquettes, el = $('etiq');
     const n = e ? e.aImprimer : 0;
+    // 14 nov. — les étiquettes DEMANDÉES par le plancher passent devant : la carte rouge les nomme.
+    const d = etat.demandesEtiq || [];
+    if (d.length) {
+      const noms = d.slice(0, 3).map((x) => `${esc(x.nom)}${x.format ? ` (${x.format}${x.quantite > 1 ? ` × ${x.quantite}` : ''})` : ''}`).join(' · ');
+      el.className = 'carte etiq alerte';
+      el.innerHTML = `<div class="libelle">Étiquettes de prix</div><div class="mot">${d.length > 1 ? `${d.length} étiquettes demandées` : 'Étiquette demandée'} par le plancher</div>`
+        + `<div class="sous">${noms}${d.length > 3 ? ` · + ${d.length - 3}` : ''}${n ? ` — et ${n} changement${n > 1 ? 's' : ''} à imprimer` : ''}</div>`;
+      return;
+    }
     el.className = `carte etiq ${n ? 'alerte' : 'calme'}`;
     el.innerHTML = e === null
       ? '<div class="libelle">Étiquettes de prix</div><div class="mot">Pas lues</div>'
@@ -338,6 +348,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
         commandes: j.commandes ?? etat?.commandes ?? null,
         etiquettes: j.etiquettes ?? etat?.etiquettes ?? null,
         camions: j.camions ?? etat?.camions ?? null,
+        demandesEtiq: j.demandesEtiq ?? etat?.demandesEtiq ?? null,
       };
       derniereReussite = Date.now();
       const neuves = new Set();
@@ -346,8 +357,15 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
         if (vusAppels) for (const a of j.appels) if (!vusAppels.has(`${a.id}:${a.fois}`)) neuves.add(a.id);
         vusAppels = ids;
       }
+      // Une étiquette demandée par le plancher qu'on n'avait pas vue : le carillon.
+      let etiqNeuve = false;
+      if (j.demandesEtiq) {
+        const cles = new Set(j.demandesEtiq.map((a) => `${a.id}:${a.fois}`));
+        if (vusEtiq) for (const k of cles) if (!vusEtiq.has(k)) etiqNeuve = true;
+        vusEtiq = cles;
+      }
       const n = j.etiquettes ? j.etiquettes.aImprimer : avantEtiq;
-      if (avantEtiq !== null && n > 0 && avantEtiq === 0) carillon();
+      if (etiqNeuve || (avantEtiq !== null && n > 0 && avantEtiq === 0)) carillon();
       else if (neuves.size) dingAppel();
       avantEtiq = n;
       montrerEcran();
@@ -399,11 +417,11 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   if (DEMO !== null) {
     const palier = Math.max(PALIER, Math.round((Number(DEMO) || PALIER) / PALIER) * PALIER);
     etat = { appels: [{ id: 'a', nom: 'Bleuet', photo: null, plancher: '1', fois: 1 }, { id: 'b', nom: 'Melon d’eau quartier', photo: null, plancher: '2', fois: 2 }],
-      commandes: [], etiquettes: { aImprimer: 0 }, camions: null };
+      commandes: [], etiquettes: { aImprimer: 0 }, camions: null,
+      demandesEtiq: DEMO === 'etiquette' ? [{ id: 'e1', nom: 'Canneberges', plancher: '1', fois: 1, quantite: 1, format: 'grande' }, { id: 'e2', nom: 'Melon miel', plancher: '1', fois: 1, quantite: 2, format: 'petite' }] : [] };
     derniereReussite = Date.now();
     montrerEcran(); dessiner();
-    setTimeout(() => feter(palier), 700);
-    document.addEventListener('pointerdown', () => feter(palier));
+    if (DEMO !== 'etiquette') { setTimeout(() => feter(palier), 700); document.addEventListener('pointerdown', () => feter(palier)); }
     return;
   }
   setInterval(() => lire(), LECTURE_MS);
