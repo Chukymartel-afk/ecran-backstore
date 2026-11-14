@@ -76,6 +76,11 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
 .h.r::before { content: ""; position: absolute; width: 16cqw; height: 16cqw; right: -5cqw; top: -9cqw; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.22), rgba(0,0,0,0)); }
 .h.r i { color: rgba(255,255,255,.85); }
 .h.r span { color: #fff; background: rgba(0,0,0,.18); }
+/* 14 nov. — Keven : la commande terminée passe au vert (5 min), puis s'en va. */
+.h.v { background: var(--vert); color: #fff; box-shadow: 0 .7cqw 1.6cqw rgba(40,165,90,.3); }
+.h.v i { color: rgba(255,255,255,.9); }
+.h.v span { color: #fff; background: rgba(0,0,0,.16); font-family: var(--noir); font-weight: 900; }
+.h.v.neuve { animation: faite .5s cubic-bezier(.16,1,.3,1); }
 /* 13 nov. — Keven : une commande pour demain, un peu grisée. */
 .h.demain { background: rgba(255,255,255,.55); box-shadow: none; }
 .h.demain b, .h.demain i { color: var(--gris-pale); }
@@ -182,7 +187,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   const MAX_CMD = 4;
   // 13 nov. — la télé ne se recharge jamais : elle relit sa page toutes les 2 min et se
   // recharge quand une nouvelle version est publiée (changer VERSION à chaque envoi).
-  const VERSION = '2026-11-14-5';
+  const VERSION = '2026-11-14-6';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const lireJeton = () => { try { return localStorage.getItem(CLE); } catch { return null; } };
@@ -281,7 +286,8 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   let etat = null;          // la dernière lecture réussie
   let vusAppels = null;     // les demandes déjà vues (null = première lecture : aucun son)
   let avantEtiq = null;
-  let faitesDessinees = new Set();   // les demandes déjà montrées en vert
+  let faitesDessinees = new Set();
+  let vertesDessinees = new Set();   // les commandes terminées déjà montrées en vert   // les demandes déjà montrées en vert
   let vusEtiq = null;       // les étiquettes demandées déjà vues (null = première lecture : aucun son)
   let derniereReussite = 0;
 
@@ -322,11 +328,17 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
     if (c === null) { $('plus').textContent = ''; $('heures').innerHTML = '<div class="vide">Commandes pas lues</div>'; return; }
     const maintenant = Date.now(), auj = cleJour(new Date());
     const quand = (m) => (m < 0 ? `En retard ${-m} min` : m <= 1 ? 'Le client arrive' : m < 60 ? `Dans ${m} min` : `Dans ${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`);
-    $('plus').textContent = c.length > MAX_CMD ? `+ ${c.length - MAX_CMD} autre${c.length - MAX_CMD > 1 ? 's' : ''}` : '';
-    $('heures').innerHTML = c.length
-      ? c.slice(0, MAX_CMD).map((o) => {
+    // Les terminées (vertes, 2 au plus) en haut ; les pas prêtes remplissent le reste des 4 places.
+    const vertes = c.filter((o) => o.prete).slice(-2), reste = c.filter((o) => !o.prete);
+    const places = MAX_CMD - vertes.length, enTrop = reste.length - places;
+    const dejaVertes = vertesDessinees;
+    vertesDessinees = new Set(vertes.map((o) => o.id));
+    $('plus').textContent = enTrop > 0 ? `+ ${enTrop} autre${enTrop > 1 ? 's' : ''}` : '';
+    $('heures').innerHTML = vertes.length + reste.length
+      ? [...vertes, ...reste.slice(0, places)].map((o) => {
           const d = new Date(o.cueillette), m = Math.floor((d.getTime() - maintenant) / 60000);
           const aujourdhui = cleJour(d) <= auj;
+          if (o.prete) return `<div class="h v${dejaVertes.has(o.id) ? '' : ' neuve'}"><b>${hm(d)}</b><i>terminée</i><span>✓</span></div>`;
           return `<div class="h${!aujourdhui ? ' demain' : m <= 15 ? ' r' : ''}"><b>${hm(d)}</b><i>${aujourdhui ? 'aujourd’hui' : 'demain'}</i>${aujourdhui ? `<span>${quand(m)}</span>` : ''}</div>`;
         }).join('')
       : '<div class="vide">Tout est prêt</div>';
@@ -428,7 +440,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   if (DEMO !== null) {
     const palier = Math.max(PALIER, Math.round((Number(DEMO) || PALIER) / PALIER) * PALIER);
     etat = { appels: [{ id: 'f', nom: 'Ananas', photo: null, plancher: '1', fois: 1, fait: DEMO === 'fait' }, { id: 'a', nom: 'Bleuet', photo: null, plancher: '1', fois: 1 }, { id: 'b', nom: 'Melon d’eau quartier', photo: null, plancher: '2', fois: 2 }],
-      commandes: [], etiquettes: { aImprimer: 0 }, camions: null,
+      commandes: DEMO === 'fait' ? [{ id: 'c1', cueillette: new Date(Date.now() + 40 * 60000).toISOString(), prete: true }, { id: 'c2', cueillette: new Date(Date.now() + 12 * 60000).toISOString(), prete: false }, { id: 'c3', cueillette: new Date(Date.now() + 95 * 60000).toISOString(), prete: false }] : [], etiquettes: { aImprimer: 0 }, camions: null,
       demandesEtiq: DEMO === 'etiquette' ? [{ id: 'e1', nom: 'Canneberges', plancher: '1', fois: 1, quantite: 1, format: 'grande' }, { id: 'e2', nom: 'Melon miel', plancher: '1', fois: 1, quantite: 2, format: 'petite' }] : [] };
     derniereReussite = Date.now();
     montrerEcran(); dessiner();
