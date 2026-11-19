@@ -175,6 +175,81 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   100% { transform: scaleX(1); }
 }
 @media (prefers-reduced-motion: reduce) { .arrivee, .arrivee * { animation: none !important; } }
+/* 19 nov. (soir) — L'OUVERTURE ET LE CLOSE, v2. Keven : « fais de quoi plus sick, insane, bien fait » ;
+   « Tâches du close » en titre (plus de PROMO), l'heure de la même grosseur, les avatars de ceux
+   qui ont rejoint à côté ; une tâche prise descend au bas de sa colonne ; finie, elle passe au vert,
+   se coche et file dans la bande du bas (en largeur, son temps, le crochet), qui disparaît à droite ;
+   le compte au-dessus de la barre, en bas à droite. Noir profond, chiffres blancs, vert PROMO pour
+   ce qui avance (ses widgets). Que des transform et des opacity, jamais de ressort. */
+html.nuit, html.nuit body { background: #050606; }
+.quart { position: absolute; inset: 0; background: #0B0D0C; color: #fff; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: 2.1cqw 2.4cqw 1.7cqw; gap: 1.5cqw; overflow: hidden; }
+.quart::before { content: ""; position: absolute; inset: -20% -10% auto; height: 60%; background: radial-gradient(60% 60% at 50% 0%, rgba(255,255,255,.07), rgba(255,255,255,0)); pointer-events: none; }
+.quart .haut { position: relative; display: flex; align-items: center; gap: 2cqw; }
+.quart h1 { margin: 0; flex: 1; min-width: 0; font-family: var(--noir); font-weight: 900; font-size: 4.3cqw; letter-spacing: -.045em; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.quart .heureq { flex: none; font-family: var(--noir); font-weight: 900; font-size: 4.3cqw; letter-spacing: -.045em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.equipeq { flex: none; display: flex; align-items: center; gap: .6cqw; }
+.av { position: relative; flex: none; width: 3.3cqw; height: 3.3cqw; border-radius: 50%; display: grid; place-items: center; overflow: hidden; font-family: var(--texte); font-weight: 800; font-size: 1.45cqw; line-height: 1; color: #fff; background: #2B302D; box-shadow: 0 0 0 .22cqw #0B0D0C; }
+.av img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.av.plus { background: rgba(255,255,255,.13); font-size: 1.2cqw; }
+.av.neuf { animation: avEntre .7s cubic-bezier(.2,.9,.25,1) both; }
+@keyframes avEntre { from { transform: scale(.3); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.quart .cols { position: relative; display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 1.3cqw; min-height: 0; }
+.colq { display: flex; flex-direction: column; gap: .62cqw; min-height: 0; }
+.colq > .libelle { display: flex; justify-content: space-between; padding: 0 .45cqw .25cqw; color: rgba(255,255,255,.42); font-size: 1.12cqw; letter-spacing: .13em; }
+.colq > .libelle em { font-style: normal; font-variant-numeric: tabular-nums; }
+.colq.toute > .libelle { color: var(--vert); }
+.colq .encours { margin-top: auto; display: flex; flex-direction: column; gap: .62cqw; }
+
+.tq { position: relative; display: flex; align-items: center; gap: .85cqw; min-height: 3.8cqw; padding: .55cqw .9cqw; border-radius: 1.2cqw; background: rgba(255,255,255,.055); box-shadow: inset 0 0 0 1px rgba(255,255,255,.075); transform-origin: top left; }
+.tq .rond { flex: none; width: 1.75cqw; height: 1.75cqw; border-radius: 50%; box-shadow: inset 0 0 0 .17cqw rgba(255,255,255,.3); }
+.tq .txt { flex: 1; min-width: 0; display: grid; gap: .12cqw; }
+.tq .titre { font-size: 1.48cqw; font-weight: 600; letter-spacing: -.015em; line-height: 1.16; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tq.en_cours { background: #fff; color: #111412; box-shadow: 0 .9cqw 2.2cqw rgba(0,0,0,.5); padding-right: 1.1cqw; }
+.tq.en_cours .titre { font-weight: 700; }
+.tq .qui { font-size: 1.05cqw; font-weight: 700; color: #6E746F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tq .gens { flex: none; display: flex; }
+.tq .gens .av { width: 2.35cqw; height: 2.35cqw; font-size: 1.02cqw; box-shadow: 0 0 0 .18cqw #fff; }
+.tq .gens .av + .av { margin-left: -.65cqw; }
+.tq .min { flex: none; text-align: right; line-height: .92; font-variant-numeric: tabular-nums; }
+.tq .min b { display: block; font-family: var(--noir); font-weight: 900; font-size: 2.45cqw; letter-spacing: -.05em; }
+.tq .min small { display: block; margin-top: .2cqw; font-size: .9cqw; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #8A908B; }
+.tq .vif { position: absolute; top: .65cqw; right: .65cqw; width: .5cqw; height: .5cqw; border-radius: 50%; background: var(--vert); animation: vif 1.6s ease-in-out infinite; }
+@keyframes vif { 0%, 100% { opacity: 1; } 50% { opacity: .2; } }
+
+.quart .bas { position: relative; display: grid; gap: .85cqw; }
+.quart .ligneq { display: flex; align-items: flex-end; justify-content: flex-end; }
+.quart .compte { display: flex; align-items: baseline; gap: 0; font-family: var(--noir); font-weight: 900; font-size: 3.4cqw; letter-spacing: -.05em; line-height: .9; font-variant-numeric: tabular-nums; }
+.quart .compte span { display: inline-block; }
+.quart .compte i { font-style: normal; color: rgba(255,255,255,.3); }
+.quart .compte small { font-family: var(--texte); font-size: 1.08cqw; font-weight: 700; letter-spacing: .14em; color: rgba(255,255,255,.42); margin-right: .9cqw; }
+.quart .compte.fini span, .quart .compte.fini i { color: var(--vert); }
+.quart .barre { position: relative; height: .6cqw; border-radius: 999px; background: rgba(255,255,255,.1); overflow: hidden; }
+.quart .barre i { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: inherit; background: var(--vert); overflow: hidden; transition: width 1.2s cubic-bezier(.2,.8,.2,1); }
+.quart .barre i::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.4), rgba(255,255,255,0)); transform: translateX(-100%); animation: reflet 3.4s ease-in-out infinite; }
+@keyframes reflet { 55%, 100% { transform: translateX(100%); } }
+.quart .faites { display: flex; gap: 1cqw; height: 5.3cqw; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, #000 76%, transparent); mask-image: linear-gradient(90deg, #000 76%, transparent); }
+.tf { position: relative; flex: none; display: flex; align-items: center; gap: .9cqw; max-width: 27cqw; padding: 0 1.3cqw 0 .9cqw; border-radius: 1.3cqw; background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
+.tf .ok { flex: none; width: 2.7cqw; height: 2.7cqw; border-radius: 50%; background: var(--vert); display: grid; place-items: center; }
+.tf .ok svg, .okf svg { width: 58%; height: 58%; display: block; }
+.tf .t { min-width: 0; display: grid; gap: .1cqw; }
+.tf .t b { font-size: 1.4cqw; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tf .t span { font-size: 1.05cqw; font-weight: 600; color: rgba(255,255,255,.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tf .temps { flex: none; margin-left: .3cqw; font-family: var(--noir); font-weight: 900; font-size: 2.1cqw; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
+.tf .temps small { font-family: var(--texte); font-size: .88cqw; font-weight: 800; letter-spacing: .12em; color: rgba(255,255,255,.5); margin-left: .25cqw; }
+/* Le fantôme : la tâche finie passe au vert, se coche, puis file dans la bande du bas. */
+.fantome { position: absolute; z-index: 6; margin: 0; pointer-events: none; }
+.fantome .vif, .fantome .min { visibility: hidden; }
+.okf { position: absolute; right: 1cqw; top: 50%; width: 2.8cqw; height: 2.8cqw; margin-top: -1.4cqw; border-radius: 50%; background: rgba(255,255,255,.22); display: grid; place-items: center; }
+.coche path { stroke-dasharray: 30; stroke-dashoffset: 0; }
+.okf .coche path { stroke-dashoffset: 30; }
+/* Trop de tâches pour l'écran : tout se resserre d'un cran, puis de deux (jamais coupé). */
+.quart .cols.serre .colq, .quart .cols.serre .encours { gap: .45cqw; }
+.quart .cols.serre .tq { min-height: 3.1cqw; padding-top: .4cqw; padding-bottom: .4cqw; }
+.quart .cols.serre .tq .titre { font-size: 1.3cqw; }
+.quart .cols.tres-serre .tq { min-height: 2.6cqw; }
+.quart .cols.tres-serre .tq .titre { font-size: 1.15cqw; -webkit-line-clamp: 1; }
+@media (prefers-reduced-motion: reduce) { .av.neuf, .tq .vif, .quart .barre i::after { animation: none; } }
 .son { position: absolute; left: 50%; bottom: 1.2cqw; transform: translateX(-50%); background: var(--encre); color: #fff; font-size: 1.5cqw; font-weight: 700; border-radius: 999px; padding: .7cqw 1.6cqw; cursor: auto; }
 </style>
 </head>
@@ -198,6 +273,20 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
         <div class="libelle">Demandes du plancher</div>
         <div class="appels" id="appels"></div>
       </section>
+    </div>
+  </div>
+
+  <div class="quart" id="quart" hidden>
+    <div class="haut">
+      <h1 id="quartTitre">Tâches du close</h1>
+      <div class="equipeq" id="quartEquipe"></div>
+      <div class="heureq" id="quartHeure">--:--</div>
+    </div>
+    <div class="cols" id="quartCols"></div>
+    <div class="bas">
+      <div class="ligneq"><div class="compte" id="quartCompte"><small>FAITES</small><span id="quartNb">0</span><i id="quartTotal">/0</i></div></div>
+      <div class="barre"><i id="quartBarre"></i></div>
+      <div class="faites" id="quartFaites"></div>
     </div>
   </div>
 
@@ -228,7 +317,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   const MAX_CMD = 4, MAX_CMD_SEUL = 6;
   // 13 nov. — la télé ne se recharge jamais : elle relit sa page toutes les 2 min et se
   // recharge quand une nouvelle version est publiée (changer VERSION à chaque envoi).
-  const VERSION = '2026-11-14-8';
+  const VERSION = '2026-11-19-2';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const lireJeton = () => { try { return localStorage.getItem(CLE); } catch { return null; } };
@@ -244,6 +333,7 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
     const d = new Date();
     $('horloge').textContent = hm(d);
     $('jour').textContent = FMT_JOUR.format(d);
+    $('quartHeure').textContent = hm(d);
   }
 
   /* ── Les sons ── */
@@ -440,8 +530,157 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
     // 13 nov. — Keven : « enlève le camion en haut ». Il ne reste que l'avis « Pas de réseau ».
     $('cotes').innerHTML = tuiles.join('');
   }
+  /* ── L'ouverture et le close, v2 (19 nov. soir) ── */
+  let quartVu = null;       // id → état au dernier dessin (null = l'écran vient d'apparaître : tout entre en cascade)
+  let rejointsVus = null;   // ceux qui ont déjà leur avatar (un nouveau entre en grandissant)
+  let compteVu = null;
+  let decalage = 0;         // l'heure du serveur moins celle de la télé
+  const COULEURS_AV = ['#2E9BD6', '#C23A6A', '#5B3FC4', '#E8B21C', '#157A5A', '#E5484D', '#7B9432'];
+  const couleurDe = (p) => p.couleur || COULEURS_AV[[...String(p.prenom || '?')].reduce((n, c) => n + c.charCodeAt(0), 0) % COULEURS_AV.length];
+  const avatar = (p, cls = '') => `<span class="av ${cls}" style="background:${esc(couleurDe(p))}">${esc(String(p.prenom || '?').charAt(0).toUpperCase())}${p.photo ? `<img src="${esc(p.photo)}" alt="" onerror="this.remove()">` : ''}</span>`;
+  const COCHE = '<svg class="coche" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const minutesDe = (debut, fin) => Math.max(0, Math.floor(((fin ? Date.parse(fin) : Date.now() + decalage) - Date.parse(debut)) / 60000));
+  /** Le temps en gros : « 12 MIN », « 1 h 05 ». */
+  function duree(debut, fin) {
+    if (!debut) return '';
+    const m = minutesDe(debut, fin);
+    return m < 60 ? `<b>${m}</b><small>min</small>` : `<b>${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}</b>`;
+  }
+  const noms = (eq) => (eq.length <= 2 ? eq.map((x) => x.prenom).join(' + ') : `${eq[0].prenom} + ${eq.length - 1}`);
+  function carte(x) {
+    if (x.etat !== 'en_cours') return `<div class="tq libre" data-id="${esc(x.id)}"><span class="rond"></span><span class="txt"><span class="titre">${esc(x.titre)}</span></span></div>`;
+    const eq = x.equipe || (x.qui ? [{ id: x.qui, prenom: x.qui }] : []);
+    return `<div class="tq en_cours" data-id="${esc(x.id)}"><span class="gens">${eq.slice(0, 3).map((p) => avatar(p)).join('')}</span>`
+      + `<span class="txt"><span class="titre">${esc(x.titre)}</span><span class="qui">${esc(noms(eq))}</span></span>`
+      + `<span class="min">${duree(x.pris_le, null)}</span><i class="vif"></i></div>`;
+  }
+  function banniere(x) {
+    const eq = x.equipe || (x.qui ? [{ id: x.qui, prenom: x.qui }] : []);
+    const m = x.pris_le ? minutesDe(x.pris_le, x.fait_le) : null;
+    const temps = m === null ? '' : m < 60 ? `${m}<small>MIN</small>` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`;
+    return `<div class="tf" data-id="${esc(x.id)}"><span class="ok">${COCHE}</span><span class="t"><b>${esc(x.titre)}</b><span>${esc(noms(eq))}</span></span><span class="temps">${temps}</span></div>`;
+  }
+  const etatDe = (el) => (el.classList.contains('tf') ? 'fait' : el.classList.contains('en_cours') ? 'en_cours' : 'libre');
+
+  function dessinerQuart() {
+    const q = etat.quart, t = q.taches || [];
+    const racine = $('quart'), base = racine.getBoundingClientRect(), u = base.width / 100;
+    // Ce qui est à l'écran maintenant : la place et l'état de chaque tâche (pour les mouvements).
+    const avant = new Map();
+    racine.querySelectorAll('[data-id]').forEach((el) => {
+      const r = el.getBoundingClientRect();
+      avant.set(el.dataset.id, { x: r.left - base.left, y: r.top - base.top, w: r.width, h: r.height, html: el.outerHTML, etat: etatDe(el) });
+    });
+    const premier = quartVu === null;
+    const total = t.length, faites = t.filter((x) => x.etat === 'fait').length;
+    const ouverture = q.genre === 'ouverture';
+    $('quartTitre').textContent = total && faites === total ? (ouverture ? 'Ouverture terminée' : 'Close terminé') : (ouverture ? 'Tâches d’ouverture' : 'Tâches du close');
+
+    // Ceux qui ont rejoint, à côté de l'heure.
+    const rj = q.rejoints || [];
+    const vus = rejointsVus;
+    $('quartEquipe').innerHTML = rj.slice(0, 7).map((p) => avatar(p, vus && !vus.has(p.id) ? 'neuf' : '')).join('')
+      + (rj.length > 7 ? `<span class="av plus">+${rj.length - 7}</span>` : '');
+    rejointsVus = new Set(rj.map((p) => p.id));
+
+    // Les colonnes : les libres en haut, celles qu'on fait en bas.
+    const zones = [];
+    for (const x of t) { let z = zones.find((y) => y.nom === x.zone); if (!z) zones.push((z = { nom: x.zone, t: [] })); z.t.push(x); }
+    const cols = $('quartCols');
+    cols.style.setProperty('--n', Math.min(6, Math.max(2, zones.length)));
+    cols.innerHTML = zones.map((z) => {
+      const f = z.t.filter((x) => x.etat === 'fait').length;
+      return `<section class="colq${f === z.t.length ? ' toute' : ''}"><div class="libelle"><span>${esc(z.nom.toUpperCase())}</span><em>${f}/${z.t.length}</em></div>`
+        + z.t.filter((x) => x.etat === 'libre').map(carte).join('')
+        + `<div class="encours">${z.t.filter((x) => x.etat === 'en_cours').sort((a, b) => Date.parse(a.pris_le || 0) - Date.parse(b.pris_le || 0)).map(carte).join('')}</div></section>`;
+    }).join('');
+
+    // La bande du bas : la dernière finie à gauche, les plus vieilles s'en vont à droite.
+    const finies = t.filter((x) => x.etat === 'fait').sort((a, b) => Date.parse(b.fait_le || 0) - Date.parse(a.fait_le || 0));
+    $('quartFaites').innerHTML = finies.slice(0, 10).map(banniere).join('');
+
+    // Le compte, au-dessus de la barre.
+    $('quartNb').textContent = String(faites);
+    $('quartTotal').textContent = `/${total}`;
+    $('quartCompte').classList.toggle('fini', !!total && faites === total);
+    if (compteVu !== null && faites !== compteVu) $('quartNb').animate([{ transform: 'translateY(45%)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 560, delay: 700, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' });
+    compteVu = faites;
+    $('quartBarre').style.width = total ? `${(faites / total) * 100}%` : '0';
+
+    // Tout doit tenir : on resserre tant qu'une colonne déborde.
+    cols.classList.remove('serre', 'tres-serre');
+    const deborde = () => [...cols.children].some((c) => c.scrollHeight > c.clientHeight + 2);
+    if (deborde()) { cols.classList.add('serre'); if (deborde()) cols.classList.add('tres-serre'); }
+
+    // Les mouvements.
+    if (premier) {
+      let k = 0;
+      racine.querySelectorAll('[data-id]').forEach((el) => el.animate([{ opacity: 0, transform: `translateY(${1.4 * u}px)` }, { opacity: 1, transform: 'none' }], { duration: 600, delay: Math.min(k++ * 30, 900), easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' }));
+    } else {
+      bouger(avant, base, u);
+    }
+    quartVu = new Map(t.map((x) => [x.id, x.etat]));
+  }
+
+  /** Chaque tâche glisse de son ancienne place à la nouvelle ; une tâche finie fait son numéro. */
+  function bouger(avant, base, u) {
+    let finies = 0;
+    $('quart').querySelectorAll('[data-id]').forEach((el) => {
+      const a = avant.get(el.dataset.id);
+      const r = el.getBoundingClientRect();
+      const b = { x: r.left - base.left, y: r.top - base.top, w: r.width, h: r.height };
+      const e = etatDe(el);
+      if (!a) { el.animate([{ opacity: 0, transform: `translateY(${u}px)` }, { opacity: 1, transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.2,.8,.2,1)' }); return; }
+      if (a.etat !== 'fait' && e === 'fait') { finir(el, a, b, u, finies++); return; }
+      const dx = a.x - b.x, dy = a.y - b.y;
+      if (Math.abs(dx) > 1 || Math.abs(dy) > 1) el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: 750, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      if (a.etat === 'libre' && e === 'en_cours') el.animate([{ backgroundColor: 'rgba(255,255,255,0.055)', color: '#ffffff' }, { backgroundColor: '#ffffff', color: '#111412' }], { duration: 750, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    });
+  }
+
+  /** La tâche finie : sa carte passe au vert, se coche, grandit à peine, puis file dans la bande du bas. */
+  function finir(el, a, b, u, rang) {
+    const racine = $('quart');
+    const boite = document.createElement('div');
+    boite.innerHTML = a.html;
+    const f = boite.firstElementChild;
+    f.classList.add('fantome');
+    f.removeAttribute('data-id');
+    Object.assign(f.style, { left: `${a.x}px`, top: `${a.y}px`, width: `${a.w}px`, height: `${a.h}px` });
+    const ok = document.createElement('span');
+    ok.className = 'okf';
+    ok.innerHTML = COCHE;
+    f.appendChild(ok);
+    racine.appendChild(f);
+    el.style.opacity = '0';
+    const attente = rang * 260, T1 = 620, T2 = 820;
+    f.animate([
+      { backgroundColor: '#ffffff', color: '#111412', transform: 'scale(1)' },
+      { backgroundColor: '#28A55A', color: '#ffffff', transform: 'scale(1.05)', offset: 0.55 },
+      { backgroundColor: '#28A55A', color: '#ffffff', transform: 'scale(1)' },
+    ], { duration: T1, delay: attente, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' });
+    ok.animate([{ transform: 'scale(.4)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 360, delay: attente + 80, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' });
+    ok.querySelector('path').animate([{ strokeDashoffset: 30 }, { strokeDashoffset: 0 }], { duration: 420, delay: attente + 200, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'both' });
+    setTimeout(() => {
+      // Le chemin le plus court vers sa place dans la bande ; elle s'efface en arrivant.
+      const vol = f.animate([
+        { transform: 'translate(0px, 0px) scale(1, 1)', opacity: 1 },
+        { opacity: 1, offset: 0.6 },
+        { transform: `translate(${b.x - a.x}px, ${b.y - a.y}px) scale(${b.w / a.w}, ${b.h / a.h})`, opacity: 0 },
+      ], { duration: T2, easing: 'cubic-bezier(.65,0,.25,1)', fill: 'forwards' });
+      vol.onfinish = () => f.remove();
+      el.animate([{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: 480, delay: T2 - 300, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' })
+        .onfinish = () => { el.style.opacity = ''; };
+      setTimeout(() => { el.style.opacity = ''; }, T2 - 300);
+    }, attente + T1);
+    setTimeout(() => bip([[784, 0, .16], [1175, .1, .42]], .16), attente + 250);
+  }
   function dessiner(neuves = new Set()) {
     if (!etat) return;
+    const quart = !!(etat.quart && etat.quart.tele);
+    if ($('porte').hidden) { $('quart').hidden = !quart; $('ecran').hidden = quart; }
+    document.documentElement.classList.toggle('nuit', quart && $('porte').hidden);
+    if (quart) dessinerQuart(); else { quartVu = null; rejointsVus = null; compteVu = null; }
     dessinerAppels(neuves); dessinerEtiquettes(); dessinerCommandes(); dessinerCotes();
   }
 
@@ -461,7 +700,10 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
         etiquettes: j.etiquettes ?? etat?.etiquettes ?? null,
         camions: j.camions ?? etat?.camions ?? null,
         demandesEtiq: j.demandesEtiq ?? etat?.demandesEtiq ?? null,
+        // 19 nov. — false = pas d'ouverture ni de close à la télé maintenant ; null = pas lu (on garde).
+        quart: j.quart === false ? null : (j.quart ?? etat?.quart ?? null),
       };
+      if (j.quart && j.quart.maintenant) decalage = Date.parse(j.quart.maintenant) - Date.now();
       derniereReussite = Date.now();
       const neuves = new Set();
       if (j.appels) {
@@ -497,9 +739,14 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
     }
   }
 
-  function montrerEcran() { $('porte').hidden = true; $('ecran').hidden = false; document.body.style.cursor = 'none'; }
+  function montrerEcran() {
+    $('porte').hidden = true;
+    const quart = !!(etat && etat.quart && etat.quart.tele);
+    $('ecran').hidden = quart; $('quart').hidden = !quart;
+    document.body.style.cursor = 'none';
+  }
   function montrerPorte() {
-    $('ecran').hidden = true; $('porte').hidden = false; $('son').hidden = true; document.body.style.cursor = 'auto';
+    $('ecran').hidden = true; $('quart').hidden = true; $('porte').hidden = false; $('son').hidden = true; document.body.style.cursor = 'auto';
     setTimeout(() => $('code').focus(), 50);
   }
 
@@ -536,6 +783,47 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
   // ?demo=commande : un aperçu de la commande qui rentre (un clic la rejoue).
   // ?demo=300 : un aperçu de la fête avec de fausses demandes, sans code ni réseau (un clic la rejoue).
   const DEMO = new URLSearchParams(location.search).get('demo');
+  // ?demo=close · ?demo=ouverture : l'écran du quart avec de fausses tâches (19 nov.). Toutes les
+  // 3,5 s (et à chaque toucher) une tâche avance : prise, aidée, finie. &fixe=1 : rien ne bouge.
+  if (DEMO === 'close' || DEMO === 'ouverture') {
+    const il = (min) => new Date(Date.now() - min * 60000).toISOString();
+    const P = { F: { id: 'f', prenom: 'Félix', couleur: '#2E9BD6' }, E: { id: 'e', prenom: 'Éléanore', couleur: '#C23A6A' }, S: { id: 's', prenom: 'Sherley', couleur: '#5B3FC4' }, M: { id: 'm', prenom: 'Mika', couleur: '#E8B21C' }, J: { id: 'j', prenom: 'Justine', couleur: '#157A5A' } };
+    const L = DEMO === 'close'
+      ? [['Caisse', 'Laver le dessus des 3 caisses', 'fait', 'E', 14, 9], ['Caisse', 'Vider la poubelle de chaque caisse', 'fait', 'E', 5, 2], ['Caisse', 'Ramasser l’argent et le placer', 'en_cours', 'F', 6], ['Caisse', 'Rapporter chaque iPad en arrière', 'libre'],
+         ['Comptoirs', 'Remplir seulement ceux pas réfrigérés', 'en_cours', 'SM', 22], ['Comptoirs', 'Remplir les patates', 'fait', 'M', 18, 11], ['Comptoirs', 'Nettoyer le dessous des comptoirs et les tablettes', 'libre'], ['Comptoirs', 'Replacer les paniers à l’entrée', 'libre'],
+         ['Backstore', 'Balai', 'fait', 'M', 7, 6], ['Backstore', 'Nettoyer les postes de travail', 'libre'], ['Backstore', 'Fermer la plastifieuse et la wrappeuse', 'libre'], ['Backstore', 'Défaire les boîtes', 'libre'], ['Backstore', 'Défaire les palettes et les sortir', 'libre'], ['Backstore', 'Défaire les commandes pas ramassées', 'fait', 'F', 31, 19], ['Backstore', 'Jeter les poubelles et les pertes', 'libre'], ['Backstore', 'Salle de bain et aire de pause', 'libre'],
+         ['Chambre froide', 'Optimiser l’espace', 'libre'], ['Chambre froide', 'Vérifier la disponibilité des produits', 'libre'], ['Chambre froide', 'Balai', 'libre'], ['Chambre froide', 'Défaire les boîtes', 'libre'], ['Chambre froide', 'Fermer la porte et la lumière', 'libre'],
+         ['Fin', 'Balai et moppe à l’avant', 'libre'], ['Fin', 'Fermer les lumières et barrer la porte', 'libre']]
+      : [['Avant', 'Alarme désactivée, entrée poinçonnée', 'fait', 'F', 48, 46], ['Avant', 'Lumières et écrans de prix allumés', 'fait', 'F', 45, 41], ['Avant', 'Tour du magasin : propreté', 'en_cours', 'F', 12], ['Avant', 'Étalages remplis et facés', 'en_cours', 'EM', 34], ['Avant', 'Vitrine, porte et entrée propres', 'libre'],
+         ['Caisse', 'Caisse ouverte avec fond de 200 $', 'fait', 'E', 40, 33], ['Caisse', 'Balance propre, à niveau et à zéro', 'libre'], ['Caisse', 'Musique : liste approuvée, volume modéré', 'libre'],
+         ['Chambre froide', 'Températures inscrites dans l’app', 'fait', 'F', 30, 26], ['Fin', 'Porte déverrouillée à l’heure', 'libre']];
+    etat = { appels: [], commandes: [], etiquettes: { aImprimer: 0 }, camions: null, demandesEtiq: [],
+      quart: { genre: DEMO, tele: true, maintenant: new Date().toISOString(), rejoints: [P.F, P.E, P.S, P.M],
+        taches: L.map(([zone, titre, e, gens, pris, fini], i) => ({ id: `d${i}`, zone, titre, etat: e, equipe: [...(gens || '')].map((k) => P[k]), pris_le: pris ? il(pris) : null, fait_le: e === 'fait' ? il(fini) : null })) } };
+    derniereReussite = Date.now();
+    montrerEcran(); dessiner();
+    let pas = 0;
+    const avancer = () => {
+      const q = etat.quart, t = q.taches;
+      pas += 1;
+      if (pas === 3 && !q.rejoints.some((p) => p.id === 'j')) q.rejoints = [...q.rejoints, P.J];
+      const enCours = t.filter((x) => x.etat === 'en_cours'), libres = t.filter((x) => x.etat === 'libre');
+      const maintenant = new Date().toISOString();
+      if (enCours.length && (!libres.length || pas % 2 === 0)) {
+        const x = enCours.sort((a, b) => Date.parse(a.pris_le) - Date.parse(b.pris_le))[0];
+        x.etat = 'fait'; x.fait_le = maintenant;
+      } else if (libres.length) {
+        const x = libres[Math.floor(Math.random() * libres.length)], gens = q.rejoints;
+        x.etat = 'en_cours'; x.pris_le = maintenant; x.equipe = [gens[Math.floor(Math.random() * gens.length)]];
+        if (pas % 5 === 0) x.equipe.push(gens[(gens.indexOf(x.equipe[0]) + 1) % gens.length]);
+      } else return;
+      dessiner();
+    };
+    document.addEventListener('pointerdown', avancer);
+    if (!new URLSearchParams(location.search).has('fixe')) setInterval(avancer, 3500);
+    setInterval(() => dessiner(), 30000);
+    return;
+  }
   if (DEMO !== null) {
     const palier = Math.max(PALIER, Math.round((Number(DEMO) || PALIER) / PALIER) * PALIER);
     etat = { appels: [{ id: 'f', nom: 'Ananas', photo: null, plancher: '1', fois: 1, fait: DEMO === 'fait' }, { id: 'a', nom: 'Bleuet', photo: null, plancher: '1', fois: 1 }, { id: 'b', nom: 'Melon d’eau quartier', photo: null, plancher: '2', fois: 2 }],
