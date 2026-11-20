@@ -94,6 +94,13 @@ html, body { margin: 0; height: 100%; background: var(--ecran); color: var(--enc
 .h.v i { color: #fff; }
 .h.v span { color: #fff; background: rgba(0,0,0,.16); font-family: var(--noir); font-weight: 900; }
 .h.v.neuve { animation: faite .5s cubic-bezier(.16,1,.3,1); }
+/* 20 nov. — Keven : préparée mais PAS vérifiée = jaune plein (comme la bande LIQUIDATION) ; verte seulement une fois vérifiée.
+   Après 5 min sans vérification, elle pulse. */
+.h.j { background: #FFD400; color: var(--encre); box-shadow: 0 .7cqw 1.6cqw rgba(214,170,0,.35); }
+.h.j i { color: var(--encre); }
+.h.j span { color: var(--encre); background: rgba(0,0,0,.12); font-family: var(--noir); font-weight: 900; }
+.h.j.vieille { animation: pouls-j 1.4s ease-in-out infinite; }
+@keyframes pouls-j { 0%,100% { box-shadow: 0 .7cqw 1.6cqw rgba(214,170,0,.35), 0 0 0 0 rgba(255,212,0,.7); } 50% { box-shadow: 0 .7cqw 1.6cqw rgba(214,170,0,.35), 0 0 0 1.3cqw rgba(255,212,0,0); } }
 /* 13 nov. — Keven : une commande pour demain, un peu grisée. */
 .h.demain { background: rgba(255,255,255,.55); box-shadow: none; }
 .h.demain b, .h.demain i { color: var(--gris-pale); }
@@ -317,7 +324,7 @@ html.nuit, html.nuit body { background: #050606; }
   const MAX_CMD = 4, MAX_CMD_SEUL = 6;
   // 13 nov. — la télé ne se recharge jamais : elle relit sa page toutes les 2 min et se
   // recharge quand une nouvelle version est publiée (changer VERSION à chaque envoi).
-  const VERSION = '2026-11-19-2';
+  const VERSION = '2026-11-20-1';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const lireJeton = () => { try { return localStorage.getItem(CLE); } catch { return null; } };
@@ -508,15 +515,22 @@ html.nuit, html.nuit body { background: #050606; }
     // Le temps qui reste, court (sans « Dans ») : le nom de la boîte garde sa place.
     const quand = (m) => (m < 0 ? `Retard ${-m} min` : m <= 1 ? 'Maintenant' : m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`);
     // Les terminées (vertes, 2 au plus) en haut ; les pas prêtes remplissent le reste des 4 places.
-    const vertes = c.filter((o) => o.prete).slice(-2), reste = c.filter((o) => !o.prete);
-    const places = ($('etiq').hidden ? MAX_CMD_SEUL : MAX_CMD) - vertes.length, enTrop = reste.length - places;
+    // 20 nov. — puis les jaunes « À vérifier » (3 au plus, la plus ancienne d'abord) : jamais en vert.
+    const vertes = c.filter((o) => o.prete).slice(-2), jaunes = c.filter((o) => o.verif === 'a_verifier' && !o.prete).slice(0, 3);
+    const reste = c.filter((o) => !o.prete && o.verif !== 'a_verifier');
+    const places = ($('etiq').hidden ? MAX_CMD_SEUL : MAX_CMD) - vertes.length - jaunes.length, enTrop = reste.length - Math.max(0, places);
     const dejaVertes = vertesDessinees;
     vertesDessinees = new Set(vertes.map((o) => o.id));
     $('plus').textContent = enTrop > 0 ? `+ ${enTrop} autre${enTrop > 1 ? 's' : ''}` : '';
-    $('heures').innerHTML = vertes.length + reste.length
-      ? [...vertes, ...reste.slice(0, places)].map((o) => {
+    $('heures').innerHTML = vertes.length + jaunes.length + reste.length
+      ? [...vertes, ...jaunes, ...reste.slice(0, Math.max(0, places))].map((o) => {
           const d = new Date(o.cueillette), m = Math.floor((d.getTime() - maintenant) / 60000);
           const aujourdhui = cleJour(d) <= auj;
+          if (o.verif === 'a_verifier' && !o.prete) {
+            const att = Math.max(0, Math.floor((Date.now() + decalage - Date.parse(o.depuis || o.cueillette)) / 60000));
+            return `<div class="h j${att >= 5 ? ' vieille' : ''}"><b>${hm(d)}</b><i>À vérifier</i><span>${att < 60 ? `${att} min` : `${Math.floor(att / 60)} h ${String(att % 60).padStart(2, '0')}`}</span></div>`;
+          }
+          if (o.prete && o.verif === 'verifiee') return `<div class="h v${dejaVertes.has(o.id) ? '' : ' neuve'}"><b>${hm(d)}</b><i>Vérifiée</i><span>✓</span></div>`;
           if (o.prete) return `<div class="h v${dejaVertes.has(o.id) ? '' : ' neuve'}"><b>${hm(d)}</b><i>Terminée</i><span>✓</span></div>`;
           // 14 nov. — Keven : l'heure de cueillette fixe à gauche, « Régulier » ou le nom de la boîte au
           // milieu, le temps qui reste à droite ; en rouge sous 1 h.
@@ -728,7 +742,7 @@ html.nuit, html.nuit body { background: #050606; }
       dessiner(neuves);
       // Une commande pas prête qu'on n'avait pas à la lecture d'avant : l'annonce (la plus proche d'abord).
       if (j.commandes) {
-        const ouvertes = j.commandes.filter((o) => !o.prete);
+        const ouvertes = j.commandes.filter((o) => !o.prete && !o.verif);
         const cmdNeuves = vusCmd ? ouvertes.filter((o) => !vusCmd.has(o.id)) : [];
         vusCmd = new Set([...(vusCmd ?? []), ...ouvertes.map((o) => o.id)].slice(-400));
         if (cmdNeuves.length) annoncer(cmdNeuves.sort((a, b) => new Date(a.cueillette) - new Date(b.cueillette)));
@@ -821,6 +835,19 @@ html.nuit, html.nuit body { background: #050606; }
     };
     document.addEventListener('pointerdown', avancer);
     if (!new URLSearchParams(location.search).has('fixe')) setInterval(avancer, 3500);
+    setInterval(() => dessiner(), 30000);
+    return;
+  }
+  // ?demo=verif : 1 vérifiée (verte), 3 à vérifier (la plus vieille pulse), le reste pas prêtes (20 nov.).
+  if (DEMO === 'verif') {
+    const dans = (min) => new Date(Date.now() + min * 60000).toISOString(), avant = (min) => new Date(Date.now() - min * 60000).toISOString();
+    etat = { appels: [], etiquettes: { aImprimer: 0 }, camions: null, demandesEtiq: [], quart: null,
+      commandes: [{ id: 'v1', cueillette: dans(25), prete: true, verif: 'verifiee' },
+        { id: 'j1', cueillette: dans(10), prete: false, verif: 'a_verifier', depuis: avant(7) },
+        { id: 'j2', cueillette: dans(30), prete: false, verif: 'a_verifier', depuis: avant(2) },
+        { id: 'c3', cueillette: dans(50), prete: false, enPrep: true }] };
+    derniereReussite = Date.now();
+    montrerEcran(); dessiner();
     setInterval(() => dessiner(), 30000);
     return;
   }
