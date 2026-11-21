@@ -324,7 +324,7 @@ html.nuit, html.nuit body { background: #050606; }
   const MAX_CMD = 4, MAX_CMD_SEUL = 6;
   // 13 nov. — la télé ne se recharge jamais : elle relit sa page toutes les 2 min et se
   // recharge quand une nouvelle version est publiée (changer VERSION à chaque envoi).
-  const VERSION = '2026-11-20-1';
+  const VERSION = '2026-11-21-1';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const lireJeton = () => { try { return localStorage.getItem(CLE); } catch { return null; } };
@@ -471,6 +471,7 @@ html.nuit, html.nuit body { background: #050606; }
   let vertesDessinees = new Set();   // les commandes terminées déjà montrées en vert   // les demandes déjà montrées en vert
   let vusCmd = null;        // les commandes pas prêtes déjà vues (null = première lecture : aucune annonce)
   let vusEtiq = null;       // les étiquettes demandées déjà vues (null = première lecture : aucun son)
+  let vusLignes = null;     // les lignes de la file d'étiquettes déjà vues (null = première lecture : aucun son)
   let derniereReussite = 0;
 
   function dessinerAppels(neuves) {
@@ -735,7 +736,16 @@ html.nuit, html.nuit body { background: #050606; }
         vusEtiq = cles;
       }
       const n = j.etiquettes ? j.etiquettes.aImprimer : avantEtiq;
-      if (etiqNeuve || (avantEtiq !== null && n > 0 && avantEtiq === 0)) carillon();
+      // 21 nov. — une ligne de la file qu'on n'avait jamais vue = UN carillon (même s'il en attendait déjà d'autres).
+      // Une ligne déjà vue ne resonne jamais ; la première lecture est muette ; on garde ce qu'on a vu.
+      let ligneNeuve = false;
+      if (j.etiquettes && Array.isArray(j.etiquettes.cles)) {
+        if (vusLignes) for (const k of j.etiquettes.cles) if (!vusLignes.has(k)) ligneNeuve = true;
+        vusLignes = new Set([...(vusLignes ?? []), ...j.etiquettes.cles].slice(-600));
+      }
+      // Une fonction sans les clés (ancienne) : le vieux repère, la file passe de 0 à quelque chose.
+      const ancien = !(j.etiquettes && Array.isArray(j.etiquettes.cles)) && avantEtiq !== null && n > 0 && avantEtiq === 0;
+      if (etiqNeuve || ligneNeuve || ancien) carillon();
       else if (neuves.size) dingAppel();
       avantEtiq = n;
       montrerEcran();
